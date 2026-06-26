@@ -53,11 +53,12 @@
 ├── results_summary/
 │   ├── experiment_summary.md
 │   ├── hyperparameters.md
+│   ├── key_insights.md
 │   └── results_table.md
 ├── github_assets/
 │   └── README.md
-└── security_review/
-    └── sensitive_information_check.md
+└── results/
+    └── environment.json
 ```
 
 ## 3. Model
@@ -68,7 +69,7 @@
 | `FacebookAI/roberta-base` | Study 2 | `AutoTokenizer.from_pretrained` | Full FT, LoRA, Adapter, IA3, BitFit | `results/study2/` | `config/experiment_config.json`, `src/suite.py` |
 | `klue/roberta-base` | Study 3 | `AutoTokenizer.from_pretrained` | Full FT, LoRA, Adapter, IA3, BitFit | `results/study3/` | `config/experiment_config.json`, `src/suite.py` |
 
-모든 checkpoint는 `results/**/checkpoints/` 하위에 존재한다. GitHub 공개 시 대용량 파일 정책에 따라 Git LFS 또는 외부 artifact storage 사용이 필요하다.
+학습 과정에서 생성된 checkpoint는 공개용 경량 repository에 포함하지 않았다. 본 repository는 code, configuration, notebook, environment record, final summary tables 중심으로 구성하였다.
 
 ## 4. Dataset
 
@@ -220,59 +221,44 @@ python -m pip install -r requirements.txt
 - 기존 결과 파일을 덮어쓰지 않는다.
 - `SMOKE` 결과는 최종 논문 결론에 사용하지 않는다.
 - 재학습 명령은 본 README에서 제공하지 않는다. 실제 재실행 명령은 확인 필요이다.
-- checkpoint와 cache는 대용량이며 공개 전 분리 여부를 검토해야 한다.
+- checkpoint와 cache는 공개용 경량 repository에 포함하지 않는다.
 
-## 11. Security and Privacy Notice
+## 11. Key Insights
 
-공개 전 점검 결과는 `security_review/sensitive_information_check.md`에 정리하였다.
+최종 결과는 하나의 universal best method보다 목적별 fine-tuning 전략 선택이 더 적절하다는 점을 보여준다. 자세한 해석은 `results_summary/key_insights.md`에 정리하였다.
 
-| 점검 항목 | 현재 점검 결과 | 조치 |
+| 관찰 | 근거 | 출처 파일 |
 |---|---|---|
-| API key | 발견 안 됨 | 추가 수동 확인 권장 |
-| access token / Hugging Face token / OpenAI API key | 발견 안 됨 | 추가 수동 확인 권장 |
-| wandb key | 발견 안 됨 | 추가 수동 확인 권장 |
-| `.env` 파일 | 발견 안 됨 | `.gitignore` 유지 |
-| 개인 이메일 | 발견 안 됨 | 추가 수동 확인 권장 |
-| 개인 이름/계정명 | 일부 문서의 로컬 절대경로에서 발견 | 공개 전 제거 또는 상대경로화 필요 |
-| 개인정보 포함 데이터 | 확인 필요 | 원천 데이터셋 라이선스 및 cache 재배포 가능성 확인 필요 |
-| 비공개 데이터셋 | 확인 필요 | `cache/` 공개 전 확인 필요 |
-| 비공개 모델 checkpoint | 확인 필요 | `results/**/checkpoints/` 공개 전 확인 필요 |
+| Full Fine-tuning은 가장 강한 일반 기준선이다. | 성능 1위 19/22, 평균 Macro-F1 0.7588 | `final_tables/summary_by_task_model_method.csv`, `final_tables/winners_by_metric.csv` |
+| PEFT가 특정 조건에서 Full FT를 넘을 수 있다. | IA3는 `tweet_hate` 2개 model 조건에서 성능 1위, Adapter는 `news_ynat`에서 성능 1위 | `final_tables/winners_by_metric.csv` |
+| 파라미터 효율과 실제 학습시간은 같은 문제가 아니다. | IA3가 22/22 조건에서 최저 trainable ratio이나, wall-clock time은 별도 해석 필요 | `final_tables/winners_by_metric.csv`, `final_tables/summary_by_task_model_method.csv` |
+| 안정성은 단순 업데이트 전략에서 자주 높게 나타났다. | BitFit이 seed 안정성 1위 10/22 | `final_tables/winners_by_metric.csv` |
 
-## 12. Large File Notice
+## 12. Repository Scope
 
-읽기 전용 scan 기준 repository 전체 크기는 약 269.45 GB이며, 100MB 이상 파일 444개와 checkpoint-like 파일 3330개가 확인되었다.
+본 repository는 논문 재현성 확인에 필요한 경량 공개본이다. 실험 재현을 위한 source code, notebook, configuration, environment record, final summary tables를 포함하며, 매 run마다 생성된 checkpoint, optimizer state, raw prediction, trainer history, event log, dataset cache는 포함하지 않는다.
 
-| 항목 | 값 | 위치 |
-|---|---:|---|
-| 100MB 이상 파일 수 | 444 | 주로 `results/**/checkpoints/` |
-| checkpoint-like 파일 수 | 3330 | `.pt`, `.pth`, `.bin`, `.safetensors`, `.ckpt` |
-| 최대 파일 예시 | 약 1029.40 MB | `results/study2/PAPER/product_reviews/.../optimizer.pt` |
-
-GitHub에 직접 업로드하기 전에 `results/**/checkpoints/`, `cache/`, 대용량 binary artifact는 Git LFS 또는 외부 저장소로 분리해야 한다.
+따라서 이 repository는 원본 실험의 모든 중간 산출물을 저장하는 archive가 아니라, 논문 독자가 실험 설계와 결과 요약을 검토하고 같은 설정으로 재실행할 수 있도록 구성한 supplementary repository이다.
 
 ## 13. Limitations
 
-- optimizer와 scheduler의 명시적 설정은 현재 문서화된 config에서 확인되지 않아 `확인 필요`로 남긴다.
-- 데이터셋별 라이선스와 cache 재배포 가능 여부는 별도 확인이 필요하다.
-- Study별 model, dataset, epoch 수가 다르므로 학습시간의 cross-study 절대 비교에는 한계가 있다.
-- 실험은 확인된 단일 로컬 GPU 환경 결과를 포함하므로, 다른 GPU/driver/PyTorch 조합에서 wall-clock time은 달라질 수 있다.
-- 본 저장소는 기존 결과 확인 중심으로 정리되었으며, 재학습 pipeline의 완전 자동 재현 명령은 확인 필요이다.
+- 본 repository는 논문 재현성 확인을 위한 경량 공개본이며, 원본 workspace의 checkpoint, cache, run-level log 전체를 포함하지 않는다.
+- Study별 model, dataset, epoch 수가 다르므로 학습시간은 서로 다른 Study 사이에서 절대 비교하기보다 동일 task/model 조건 안에서 해석해야 한다.
+- 실험 환경은 `results/environment.json`에 기록된 단일 GPU 환경을 기준으로 하며, 다른 GPU, driver, PyTorch 조합에서는 wall-clock time이 달라질 수 있다.
+- 데이터셋별 라이선스와 인용 요구사항은 각 원천 데이터셋 페이지를 기준으로 확인해야 한다.
+- optimizer와 scheduler는 Hugging Face `TrainingArguments` 기반으로 실행되었으며, 명시적으로 별도 optimizer/scheduler를 지정한 설정은 `config/experiment_config.json`에서 확인되지 않는다.
 
 ## 14. Citation
 
 ```bibtex
 @misc{project_repository,
-  title        = {확인 필요},
-  author       = {확인 필요},
-  year         = {확인 필요},
-  howpublished = {\url{GitHub URL 확인 필요}}
+  title        = {Fine-Tuning Strategy Reproducibility Repository},
+  author       = {LEESY-X},
+  year         = {2026},
+  howpublished = {\url{https://github.com/LEESY-X/Domain_fine-tuning_experiments}}
 }
 ```
 
 ## 15. Collaborators
 
 이 레포지토리는 프로젝트 단위로 관리하며, 필요한 collaborator를 GitHub에서 초대하면 된다.
-
-## Original README Preservation Note
-
-기존 README는 local Jupyter 실행 경로, notebook 목록, 결과 해석 주의사항을 포함하고 있었으나 Windows console 출력에서 한글이 깨져 보였다. 본 README는 기존 README에서 확인 가능한 핵심 정보인 notebook 구성, `Python (ai_lab_first)` kernel 주의사항, Study 간 시간 비교 주의사항, `SMOKE` 결과 제외 원칙을 논문 첨부용 구조로 재정리하였다.

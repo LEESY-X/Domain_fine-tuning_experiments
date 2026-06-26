@@ -14,7 +14,7 @@
 - 실행/분석 notebook: `notebooks/*.ipynb`, `COLAB_A100_*.ipynb`
 - 핵심 실행 코드: `src/`, `scripts/`, `tools/`
 - 환경 기록: `results/environment.json`
-- 논문 보조 문서: `docs/`, `results_summary/`, `security_review/`
+- 논문 보조 문서: `docs/`, `results_summary/`
 
 ## 제외한 항목
 

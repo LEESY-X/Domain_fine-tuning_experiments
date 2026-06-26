@@ -35,5 +35,5 @@
 
 - Study별 데이터셋, 모델, epoch 수가 다르므로 학습시간은 Study 간 절대 비교보다 동일 task/model 내부 비교로 해석해야 한다.
 - `SMOKE` 결과는 최종 논문 결론에 포함하지 않는다.
-- 공개 저장소에는 `cache/`와 `results/**/checkpoints/`가 포함될 수 있으므로, 데이터 재배포 가능성과 대용량 파일 정책을 반드시 별도로 확인해야 한다.
+- 공개용 경량 repository에는 `cache/`와 `results/**/checkpoints/`를 포함하지 않는다. 데이터셋은 코드에서 원천 source를 다시 불러오는 구조로 정리하였다.
 - optimizer와 scheduler의 명시적 설정은 현재 확인 필요로 남아 있다. `TrainingArguments` 기본값이 적용되었을 수 있으나, 본 문서에서는 추정하지 않는다.

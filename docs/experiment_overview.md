@@ -37,7 +37,7 @@
 | `FacebookAI/roberta-base` | Study 2 | `AutoTokenizer.from_pretrained` 사용 | `src/suite.py` |
 | `klue/roberta-base` | Study 3 | `AutoTokenizer.from_pretrained` 사용 | `src/suite.py` |
 
-checkpoint 및 output model은 `results/**/checkpoints/` 하위에 저장되어 있다. 공개 저장소 업로드 전에는 대용량 checkpoint를 Git LFS 또는 외부 저장소로 분리해야 한다.
+학습 과정에서 생성된 checkpoint와 output model binary는 공개용 경량 repository에 포함하지 않았다. 공개본은 실험 구조 재현을 위한 code, configuration, notebook, final summary table 중심으로 구성하였다.
 
 ## 4. 데이터셋
 
@@ -98,7 +98,7 @@ checkpoint 및 output model은 `results/**/checkpoints/` 하위에 저장되어 
 
 이 저장소는 원본 노트북과 결과 파일을 수정하지 않는 방식으로 결과 확인을 지원한다. 논문 첨부용 GitHub 저장소로 공개할 때는 다음 항목을 사람이 직접 확인해야 한다.
 
-- `results/**/checkpoints/` 하위 대용량 checkpoint 파일 포함 여부
+- checkpoint와 cache는 공개용 경량 repository에 포함하지 않는다는 점
 - `cache/` 하위 데이터셋 cache 재배포 가능 여부
 - 로컬 절대경로 및 개인 계정명 노출 여부
 - 원천 데이터셋 라이선스
