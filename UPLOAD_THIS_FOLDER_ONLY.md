@@ -12,7 +12,7 @@
 - 실험 설정: `config/experiment_config.json`
 - 최종 요약 결과: `final_tables/summary_by_task_model_method.csv`, `final_tables/winners_by_metric.csv`
 - 실행/분석 notebook: `notebooks/*.ipynb`, `COLAB_A100_*.ipynb`
-- 핵심 실행 코드: `src/`, `scripts/`, `tools/`
+- 핵심 실행 코드: `src/`, `tools/`
 - 환경 기록: `results/environment.json`
 - 논문 보조 문서: `docs/`, `results_summary/`
 
@@ -26,9 +26,7 @@
 - `results/study*/.../final_metrics.json`
 - `results/study*/.../epoch_metrics.csv`
 - `final_tables/all_runs_550.csv`
-- `FINAL_PAPER_ANALYSIS_REPORT.html`
-- `FINAL_BRIEF_SUMMARY.html`
-- `TEAM_COST_SHARING_REPORT.html`
+- 별도 보고서 산출물
 - `__pycache__/`
 - `.ipynb_checkpoints/`
 - 로컬 작업 이어받기 문서

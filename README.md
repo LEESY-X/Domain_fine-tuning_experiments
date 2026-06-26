@@ -35,8 +35,6 @@
 │   └── 05_PROGRESS_MONITOR.ipynb
 ├── src/
 │   └── suite.py
-├── scripts/
-│   └── build_*.py
 ├── tools/
 │   └── *.py
 ├── final_tables/
@@ -213,7 +211,7 @@ python -m pip install -r requirements.txt
 1. `final_tables/summary_by_task_model_method.csv`에서 task/model/method별 평균과 표준편차를 확인한다.
 2. `final_tables/winners_by_metric.csv`에서 성능, 파라미터 효율, 안정성 기준 winner를 확인한다.
 3. `results_summary/*.md`에서 논문 첨부용 요약 표를 확인한다.
-4. run-level 전체 table과 HTML 보고서는 GitHub 업로드 용량과 공개 범위를 줄이기 위해 이 폴더에서 제외하였다.
+4. run-level 전체 table과 별도 보고서 산출물은 공개 범위를 줄이기 위해 이 폴더에서 제외하였다.
 
 ### 10.4 재현 시 주의사항
 
@@ -258,7 +256,3 @@ python -m pip install -r requirements.txt
   howpublished = {\url{https://github.com/LEESY-X/Domain_fine-tuning_experiments}}
 }
 ```
-
-## 15. Collaborators
-
-이 레포지토리는 프로젝트 단위로 관리하며, 필요한 collaborator를 GitHub에서 초대하면 된다.
