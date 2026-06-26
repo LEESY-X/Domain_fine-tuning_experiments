@@ -1,0 +1,33 @@
+{
+  "methods": ["full_ft", "lora", "adapter", "ia3", "bitfit"],
+  "seeds": [42, 52, 62, 72, 82],
+  "max_length": 128,
+  "batch_size": 16,
+  "eval_batch_size": 32,
+  "gradient_accumulation_steps": 4,
+  "precision": "fp16",
+  "weight_decay": 0.01,
+  "warmup_ratio": 0.06,
+  "early_stopping_patience": 2,
+  "dataloader_num_workers": 2,
+  "learning_rates": {
+    "full_ft": 0.00002,
+    "lora": 0.0001,
+    "adapter": 0.0001,
+    "ia3": 0.0005,
+    "bitfit": 0.0001
+  },
+  "lora": {"r": 8, "alpha": 16, "dropout": 0.05},
+  "adapter": {"bottleneck": 64, "dropout": 0.0},
+  "study1": {"epochs": 3, "models": ["vinai/bertweet-base"], "tasks": ["measuring_hate_speech"]},
+  "study2": {
+    "epochs": 2,
+    "models": ["vinai/bertweet-base", "FacebookAI/roberta-base"],
+    "tasks": ["tweet_sentiment", "finance_sentiment", "movie_reviews", "product_reviews", "tweet_emotion", "tweet_hate", "tweet_offensive", "tweet_irony", "news_topic"],
+    "limits": null
+  },
+  "study3": {"epochs": 5, "models": ["klue/roberta-base"], "tasks": ["news_ynat", "movie_nsmc", "comment_kmhas_binary"]},
+  "smoke_limits": {"train": 128, "validation": 64, "test": 64},
+  "keep_best_checkpoint": true,
+  "continue_on_error": false
+}

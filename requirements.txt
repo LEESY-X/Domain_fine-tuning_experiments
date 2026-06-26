@@ -1,0 +1,9 @@
+torch
+transformers>=4.45
+datasets>=2.18
+peft>=0.13
+accelerate
+scikit-learn
+pandas
+numpy
+jupyter

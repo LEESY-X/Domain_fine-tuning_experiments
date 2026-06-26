@@ -1,0 +1,72 @@
+# Environment and secrets
+.env
+.env.*
+*.env
+*api_key*
+*apikey*
+*secret*
+*credential*
+*credentials*
+*token*
+*hf_token*
+*huggingface_token*
+*openai*
+*wandb*
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+~$*
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Experiment caches and heavy artifacts
+cache/
+wandb/
+lightning_logs/
+runs/
+outputs/
+checkpoints/
+**/checkpoints/
+
+# Large model/checkpoint binaries
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.onnx
+
+# Large dataset/cache artifacts
+*.arrow
+*.parquet
+*.feather
+*.npy
+*.npz
+
