@@ -33,15 +33,15 @@ def monitor_notebook():
 
 
 specs = {
-    "00_PRECHECK.ipynb": ("Local 5-Method Suite Precheck", None, None),
-    "01_STUDY1_BERTWEET_HATE.ipynb": ("Study 1 - BERTweet Hate Speech", "study1", None),
-    "02_STUDY2_MULTITASK.ipynb": ("Study 2 - Multi-task and Multi-model", "study2", None),
-    "03_STUDY3_KOREAN.ipynb": ("Study 3 - Korean Generalization", "study3", None),
-    "04_AGGREGATE.ipynb": ("Aggregate Paper Results", None, "aggregate"),
+    "00_precheck.ipynb": ("Local 5-Method Suite Precheck", None, None),
+    "01_study1_bertweet_hate.ipynb": ("Study 1 - BERTweet Hate Speech", "study1", None),
+    "02_study2_multitask.ipynb": ("Study 2 - Multi-task and Multi-model", "study2", None),
+    "03_study3_korean.ipynb": ("Study 3 - Korean Generalization", "study3", None),
+    "04_aggregate.ipynb": ("Aggregate Paper Results", None, "aggregate"),
 }
 
 out = ROOT / "notebooks"; out.mkdir(parents=True, exist_ok=True)
 for name, (title, study, action) in specs.items():
     (out / name).write_text(json.dumps(notebook(title, study, action), ensure_ascii=False, indent=1), encoding="utf-8")
-(out / "05_PROGRESS_MONITOR.ipynb").write_text(json.dumps(monitor_notebook(), ensure_ascii=False, indent=1), encoding="utf-8")
+(out / "05_progress_monitor.ipynb").write_text(json.dumps(monitor_notebook(), ensure_ascii=False, indent=1), encoding="utf-8")
 print(f"created {len(specs) + 1} notebooks in {out}")

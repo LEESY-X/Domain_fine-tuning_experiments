@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "COLAB_A100_FULL_550_RUNS.ipynb"
+OUT = ROOT / "colab_a100_full_550_runs.ipynb"
 suite_source = (ROOT / "src" / "suite.py").read_text(encoding="utf-8")
 config_source = (ROOT / "config" / "experiment_config.json").read_text(encoding="utf-8")
 

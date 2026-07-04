@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-NOTEBOOK = ROOT / "COLAB_A100_FULL_550_RUNS.ipynb"
+NOTEBOOK = ROOT / "colab_a100_full_550_runs.ipynb"
 
 
 def sha(text):

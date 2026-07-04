@@ -24,8 +24,8 @@ for path in sorted((ROOT / "notebooks").glob("*.ipynb")):
         errors.append(f"{path.name}: {exc}")
 
 expected_notebooks = {
-    "00_PRECHECK.ipynb", "01_STUDY1_BERTWEET_HATE.ipynb", "02_STUDY2_MULTITASK.ipynb",
-    "03_STUDY3_KOREAN.ipynb", "04_AGGREGATE.ipynb", "05_PROGRESS_MONITOR.ipynb",
+    "00_precheck.ipynb", "01_study1_bertweet_hate.ipynb", "02_study2_multitask.ipynb",
+    "03_study3_korean.ipynb", "04_aggregate.ipynb", "05_progress_monitor.ipynb",
 }
 actual_notebooks = {x.name for x in (ROOT / "notebooks").glob("*.ipynb")}
 if not expected_notebooks.issubset(actual_notebooks): errors.append(f"missing notebooks: {sorted(expected_notebooks - actual_notebooks)}")
