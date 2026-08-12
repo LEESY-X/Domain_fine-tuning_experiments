@@ -24,9 +24,9 @@ The final aggregate tables in this package report:
 - 22 task/model combinations
 - 5 fine-tuning methods
 - 5 seeds per method
-- 550 completed runs in the original experiment workspace
+- a historical design configured for 550 runs; independent audit evidence consists of 110 aggregate method rows and 22 winner rows
 
-The run-level table `all_runs_550.csv` is not included in this lightweight public package. The included result evidence is the aggregate output in `final_tables/summary_by_task_model_method.csv` and `final_tables/winners_by_metric.csv`.
+The run-level table `all_runs_550.csv` is not included in this lightweight public package. The included original result evidence is the aggregate output in `final_tables/summary_by_task_model_method.csv` and `final_tables/winners_by_metric.csv`. Tagged snapshot [`ieie-spc-v1.0.0`](https://github.com/LEESY-X/Domain_fine-tuning_experiments/tree/ieie-spc-v1.0.0) additionally publishes compact metric-level records for all 60 pilot and 40 full-data follow-up runs. Per-example predictions, histories, events, per-run JSON files, checkpoints, and dataset caches remain local and are not part of the tagged tree.
 
 ## Repository Layout
 
@@ -36,10 +36,13 @@ The run-level table `all_runs_550.csv` is not included in this lightweight publi
 |-- submission_checklist.md
 |-- file_manifest.md
 |-- requirements.txt
+|-- requirements-followup.txt
 |-- config/
-|   `-- experiment_config.json
+|   |-- experiment_config.json
+|   `-- collapse_followup.json
 |-- src/
 |   |-- __init__.py
+|   |-- result_analysis.py
 |   `-- suite.py
 |-- tools/
 |   |-- check_progress.py
@@ -48,29 +51,33 @@ The run-level table `all_runs_550.csv` is not included in this lightweight publi
 |   |-- report_dataset_sizes.py
 |   |-- smoke_data.py
 |   |-- test_recovery.py
+|   |-- test_result_analysis.py
+|   |-- test_followup_plan.py
+|   |-- analyze_result_variance.py
+|   |-- run_collapse_followup.py
+|   |-- build_paper_followup_report.py
 |   |-- validate_suite.py
 |   `-- verify_colab_parity.py
-|-- notebooks/
-|   |-- 00_precheck.ipynb
-|   |-- 01_study1_bertweet_hate.ipynb
-|   |-- 02_study2_multitask.ipynb
-|   |-- 03_study3_korean.ipynb
-|   |-- 04_aggregate.ipynb
-|   `-- 05_progress_monitor.ipynb
+|-- notebooks/              # clean generated local runners
 |-- colab_a100_full_550_runs.ipynb
 |-- colab_a100_low_drive_550_runs.ipynb
 |-- final_tables/
 |   |-- summary_by_task_model_method.csv
 |   `-- winners_by_metric.csv
 |-- results/
-|   `-- environment.json
+|   |-- environment.json
+|   `-- followup/
 |-- results_summary/
 |   |-- experiment_summary.md
 |   |-- hyperparameters.md
 |   |-- key_insights.md
-|   `-- results_table.md
+|   |-- results_table.md
+|   |-- variance_diagnostics.md
+|   `-- paper_followup/
 |-- docs/
 |   `-- experiment_overview.md
+|-- release/
+|   `-- ieie-spc-v1.0.0/
 `-- github_assets/
     `-- README.md
 ```
@@ -207,6 +214,31 @@ This table has 22 rows, one for each task/model combination. It records:
 | `most_stable_method` | Method with the lowest seed-level Macro-F1 standard deviation |
 | `stable_f1_sd` | Seed-level Macro-F1 standard deviation for the most stable method |
 
+## Exact-Zero SD Diagnosis and Follow-up
+
+Four rows in the original 110-row method summary have `f1_sd == 0` at the stored full precision. In every case, the corresponding mean accuracy, macro precision, macro recall, and Macro-F1 satisfy the analytical relationship produced when every test sample is assigned to one class. These rows are aggregate-level evidence consistent with degenerate constant-class stability rather than display rounding; without the historical predictions, they do not directly prove what each original run predicted.
+
+Run the aggregate-only diagnosis:
+
+```bash
+python tools/analyze_result_variance.py
+```
+
+Run the targeted pilot or full-data paired follow-up:
+
+```bash
+python tools/run_collapse_followup.py
+python tools/run_collapse_followup.py --full-data --variant baseline --variant higher_lr_weighted
+```
+
+The follow-up records `predicted_class_count`, `majority_prediction_rate`, normalized prediction entropy, label distributions, and an explicit collapse flag for every run. The paper-ready Markdown, CSV, LaTeX, and self-contained HTML outputs are generated with:
+
+```bash
+python tools/build_paper_followup_report.py
+```
+
+See `results_summary/variance_diagnostics.md` for the original diagnosis and `results_summary/paper_followup/` for the retraining tables, paired statistics, paper-ready wording, and limitations.
+
 ## Aggregate Findings in the Included Tables
 
 The following summary statistics are computed from the included CSV files.
@@ -237,7 +269,7 @@ Parameter-efficiency winner:
 |---|---:|
 | IA3 | 22 / 22 |
 
-Stability winners by lowest seed-level Macro-F1 standard deviation:
+Legacy stability labels by lowest seed-level Macro-F1 standard deviation (one exact tie was broken by source-row order):
 
 | Method | Count |
 |---|---:|
@@ -247,11 +279,13 @@ Stability winners by lowest seed-level Macro-F1 standard deviation:
 | Full Fine-tuning | 2 / 22 |
 | Adapter | 2 / 22 |
 
+This original stability ranking is retained for traceability but must not be interpreted without the collapse diagnostics. Finance/RoBERTa has an exact zero-SD tie between Adapter and BitFit; the legacy single-winner table assigns it to BitFit by source-row order. Three task/model labels in `winners_by_metric.csv` therefore point to fingerprint-consistent zero-SD rows. Excluding all four diagnosed method rows changes the winner-count sensitivity analysis to BitFit 8, IA3 5, Full Fine-tuning 3, LoRA 3, and Adapter 3.
+
 These results should be interpreted as task/model-specific comparisons, not as a universal claim that one method is best for every setting.
 
 ## Environment Record
 
-The completed local run environment is recorded in `results/environment.json`.
+The historical environment record associated with the aggregate is stored in `results/environment.json`; it is not a substitute for the missing 550 per-run configurations.
 
 | Field | Recorded value |
 |---|---|
@@ -295,18 +329,14 @@ Run a lightweight dataset smoke check:
 python tools/smoke_data.py
 ```
 
-Use the notebooks for execution:
+Use the clean, output-free Colab notebooks for execution:
 
 | Notebook | Role |
 |---|---|
-| `notebooks/00_precheck.ipynb` | Local environment and setup precheck |
-| `notebooks/01_study1_bertweet_hate.ipynb` | Study 1 execution |
-| `notebooks/02_study2_multitask.ipynb` | Study 2 execution |
-| `notebooks/03_study3_korean.ipynb` | Study 3 execution |
-| `notebooks/04_aggregate.ipynb` | Aggregation workflow |
-| `notebooks/05_progress_monitor.ipynb` | Progress monitoring workflow |
 | `colab_a100_full_550_runs.ipynb` | Colab-oriented full 550-run workflow |
 | `colab_a100_low_drive_550_runs.ipynb` | Colab workflow variant intended to reduce Drive storage pressure |
+
+`tools/create_notebooks.py` regenerates the clean local workflow notebooks. Historical executed copies containing bulky output and machine-local paths were replaced by these output-free runners.
 
 Important: full reruns require substantial GPU time and access to the referenced external datasets. The included public package is intended to support reproducibility and inspection, not to store every generated artifact.
 
@@ -321,9 +351,12 @@ Important: full reruns require substantial GPU time and access to the referenced
 | `tools/create_colab_a100_notebook.py` | Regenerates the full Colab notebook |
 | `tools/verify_colab_parity.py` | Checks parity assumptions for the Colab notebook |
 | `tools/test_recovery.py` | Recovery/resume-related utility |
-| `tools/validate_suite.py` | Legacy validation script from the fuller workspace |
-
-Known limitation: `tools/validate_suite.py` still contains checks for HTML visualization files that are intentionally excluded from this lightweight package. Therefore, it should be treated as a legacy/full-workspace validation helper unless those HTML files are restored or the script is adjusted for the public package.
+| `tools/analyze_result_variance.py` | Diagnoses exact-zero SD rows from the original aggregate |
+| `tools/run_collapse_followup.py` | Runs the targeted pilot or full-data collapse follow-up |
+| `tools/build_paper_followup_report.py` | Builds paper tables, paired statistics, and the report artifact |
+| `tools/sanitize_followup_artifacts.py` | Rebuilds compact, publication-safe follow-up aggregates from local run files |
+| `tools/build_public_release.py` | Validates public run coverage and generates the release manifest/checksums |
+| `tools/validate_suite.py` | Validates code, clean Colab notebooks, study counts, follow-up plan, and public tables |
 
 ## What Is Intentionally Excluded
 
@@ -332,38 +365,24 @@ The following are excluded to keep this repository small and suitable for paper 
 - dataset caches
 - model checkpoints
 - model binary outputs
-- per-run `predictions.csv`
-- per-run `trainer_history.csv`
-- per-run `events.jsonl`
-- per-run `final_metrics.json`
-- per-run `epoch_metrics.csv`
+- original 550-run per-run `predictions.csv`, histories, events, and metrics
 - the run-level `final_tables/all_runs_550.csv`
-- generated HTML reports
 - internal audit/process folders
-- local notebook checkpoint directories
+- notebook execution output and notebook checkpoint directories
 - Python cache directories
 
-The excluded files are not needed to understand the aggregate results in `final_tables/`, but they may be needed for a complete archival replication package if a venue explicitly requests every run-level artifact.
+For the bounded collapse follow-up, the public surface contains compact metric-level tables for 100 runs, including seeds, run signatures, class-count summaries, collapse diagnostics, and timing. Per-example predictions, histories, events, run JSON files, checkpoints, and caches remain excluded. The release boundary and checksums are recorded under `release/ieie-spc-v1.0.0/`.
 
 ## Limitations and Notes
 
-- Optimizer and scheduler details should be interpreted through Hugging Face `TrainingArguments` and the installed transformers version unless explicitly set in `src/suite.py`.
+- The current reproducibility code explicitly sets optimizer=`adamw_torch` and scheduler=`linear`; the original 550-run per-run configuration is absent, so those historical values cannot be proven from this public package alone.
 - Dataset licenses are not restated in this repository; check the original dataset sources before redistributing data or derived artifacts.
-- The included aggregate CSV files are the public evidence surface. They do not contain raw per-example predictions.
+- The original aggregate CSV files do not contain raw per-example predictions. Follow-up predictions for the four diagnosed conditions are retained and validated locally but are not released.
 - Time comparisons should be interpreted within the same task/model condition. Different studies use different datasets, models, and epoch counts.
 - Parameter efficiency and wall-clock training time are separate quantities in this study.
 
 ## Citation
 
-If this repository is cited as supplementary material, replace the placeholder below with the final paper metadata.
+Until the accompanying paper receives final bibliographic metadata, cite the versioned artifact URL rather than the moving default branch:
 
-```bibtex
-@misc{fine_tuning_strategy_reproducibility,
-  title        = {Fine-Tuning Strategy Reproducibility Package},
-  author       = {확인 필요},
-  year         = {2026},
-  howpublished = {\url{https://github.com/LEESY-X/Domain_fine-tuning_experiments}},
-  note         = {Supplementary reproducibility package for a fine-tuning strategy comparison study}
-}
-```
-
+`https://github.com/LEESY-X/Domain_fine-tuning_experiments/tree/ieie-spc-v1.0.0`

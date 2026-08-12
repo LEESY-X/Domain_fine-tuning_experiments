@@ -1,0 +1,1067 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "표준편차 0 진단 및 붕괴 후속 재학습 보고서",
+    "description": "논문용 원본 진단, 파일럿 ablation, 전체 데이터 재학습 결과와 주장 한계를 정리한 기술 보고서.",
+    "generatedAt": "2026-08-12T19:50:30+09:00",
+    "cards": [
+      {
+        "id": "original_zero_rows",
+        "description": "원본 110개 집계 행 중 Macro-F1 SD가 정확히 0인 행.",
+        "dataset": "headline_original",
+        "sourceId": "original_headline_query",
+        "metrics": [
+          {
+            "label": "원본 exact-zero SD 행",
+            "field": "zero_rows",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "pilot_recovery",
+        "description": "파일럿에서 결합 개선 조건이 constant-class collapse를 제거한 조건 수.",
+        "dataset": "headline_pilot",
+        "sourceId": "pilot_headline_query",
+        "metrics": [
+          {
+            "label": "파일럿 붕괴 제거 조건",
+            "field": "recovered_conditions",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "full_recovery",
+        "description": "전체 데이터에서 기준선보다 붕괴 run이 감소하고 평균 Macro-F1이 증가한 조건 수.",
+        "dataset": "headline_full",
+        "sourceId": "full_headline_query",
+        "metrics": [
+          {
+            "label": "전체 데이터 개선 조건",
+            "field": "recovered_conditions",
+            "format": "number"
+          },
+          {
+            "label": "5/5 seed 개선 조건",
+            "field": "all_positive_conditions",
+            "format": "number"
+          }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "full_f1_comparison",
+        "title": "Baseline and combined-remedy Macro-F1 by condition",
+        "subtitle": "The combined remedy was higher in every five-seed comparison; Table 3 reports exact uncertainty and collapse diagnostics.",
+        "type": "bar",
+        "intent": "comparison",
+        "question": "How did mean Macro-F1 change from the baseline to the combined remedy in each targeted condition?",
+        "rationale": "A grouped bar chart makes the paired configuration gap comparable across the four targeted conditions while preserving exact values in the adjacent table.",
+        "comparisonContext": {
+          "baseline": "Original two-epoch follow-up baseline",
+          "grain": "Task-model-method condition and configuration",
+          "unit": "Mean test Macro-F1 across five seeds"
+        },
+        "dataset": "full_chart_rows",
+        "sourceId": "full_chart_query",
+        "encodings": {
+          "x": {
+            "field": "condition_short",
+            "type": "nominal",
+            "label": "Condition"
+          },
+          "y": {
+            "field": "macro_f1",
+            "type": "quantitative",
+            "label": "Mean Macro-F1",
+            "format": "number"
+          },
+          "color": {
+            "field": "configuration",
+            "type": "nominal",
+            "label": "Configuration"
+          },
+          "tooltip": [
+            {
+              "field": "f1_sd",
+              "type": "quantitative",
+              "label": "Sample SD",
+              "format": "number"
+            },
+            {
+              "field": "collapse_runs",
+              "type": "quantitative",
+              "label": "Collapsed runs",
+              "format": "number"
+            },
+            {
+              "field": "majority_prediction_rate",
+              "type": "quantitative",
+              "label": "Mean majority-prediction rate",
+              "format": "number"
+            },
+            {
+              "field": "seed_count",
+              "type": "quantitative",
+              "label": "Seeds",
+              "format": "number"
+            }
+          ]
+        },
+        "palette": {
+          "kind": "categorical",
+          "name": "baseline-vs-remedy"
+        },
+        "legend": {
+          "position": "bottom",
+          "sort": "spec",
+          "title": "Configuration"
+        },
+        "labels": {
+          "values": "all"
+        },
+        "valueFormat": "number",
+        "layout": "full"
+      }
+    ],
+    "tables": [
+      {
+        "id": "original_table",
+        "title": "원본 exact-zero SD는 수치 잘림이 아니라 붕괴 지문과 일치",
+        "subtitle": "전체 정밀도 값으로 확인한 네 조건. Macro recall=1/K 및 대응 precision/F1 관계를 동시에 확인했다.",
+        "dataset": "original_rows",
+        "sourceId": "original_table_query",
+        "defaultSort": {
+          "field": "condition",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "condition",
+            "label": "Condition",
+            "type": "text"
+          },
+          {
+            "field": "macro_f1_mean_sd",
+            "label": "Macro-F1 mean ± SD",
+            "type": "text"
+          },
+          {
+            "field": "fingerprint",
+            "label": "Collapse fingerprint",
+            "type": "text"
+          },
+          {
+            "field": "interpretation",
+            "label": "Interpretation",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "pilot_table",
+        "title": "파일럿 ablation에서는 세 요소를 결합한 조건만 Adapter 붕괴를 해소",
+        "subtitle": "FinancialPhraseBank, RoBERTa Adapter, train=1,024, seed 5개. 파일럿 결과는 전체 데이터 결론과 분리한다.",
+        "dataset": "pilot_rows",
+        "sourceId": "pilot_table_query",
+        "defaultSort": {
+          "field": "variant_label",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "variant_label",
+            "label": "Variant",
+            "type": "text"
+          },
+          {
+            "field": "macro_f1_mean_sd",
+            "label": "Macro-F1 mean ± SD",
+            "type": "text"
+          },
+          {
+            "field": "collapse_runs_display",
+            "label": "Collapsed runs",
+            "type": "text"
+          },
+          {
+            "field": "full_coverage_display",
+            "label": "Full-class coverage",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "full_table",
+        "title": "전체 데이터 paired 재학습 결과",
+        "subtitle": "동일 seed paired 비교. CI는 paired t interval, p는 2-sided exact sign-flip test다.",
+        "dataset": "full_rows",
+        "sourceId": "full_table_query",
+        "defaultSort": {
+          "field": "delta_mean",
+          "direction": "desc"
+        },
+        "columns": [
+          {
+            "field": "condition",
+            "label": "Condition",
+            "type": "text"
+          },
+          {
+            "field": "train_rows",
+            "label": "Train n",
+            "format": "number"
+          },
+          {
+            "field": "test_rows",
+            "label": "Test n",
+            "format": "number"
+          },
+          {
+            "field": "baseline_mean_sd",
+            "label": "Baseline F1",
+            "type": "text"
+          },
+          {
+            "field": "remedy_mean_sd",
+            "label": "Remedy F1",
+            "type": "text"
+          },
+          {
+            "field": "delta_mean",
+            "label": "ΔF1",
+            "format": "number",
+            "movement": true
+          },
+          {
+            "field": "baseline_collapse_display",
+            "label": "Base collapse",
+            "type": "text"
+          },
+          {
+            "field": "remedy_collapse_display",
+            "label": "Remedy collapse",
+            "type": "text"
+          },
+          {
+            "field": "baseline_majority_display",
+            "label": "Base majority rate",
+            "type": "text"
+          },
+          {
+            "field": "remedy_majority_display",
+            "label": "Remedy majority rate",
+            "type": "text"
+          },
+          {
+            "field": "remedy_epochs_completed_mean",
+            "label": "Remedy epochs mean",
+            "format": "number"
+          },
+          {
+            "field": "train_time_multiplier_display",
+            "label": "Train-time multiplier",
+            "type": "text"
+          },
+          {
+            "field": "remedy_full_coverage_display",
+            "label": "Remedy full coverage",
+            "type": "text"
+          },
+          {
+            "field": "better_seeds_display",
+            "label": "Improved seeds",
+            "type": "text"
+          },
+          {
+            "field": "exact_sign_flip_p_two_sided",
+            "label": "Exact p",
+            "format": "number"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "original_summary",
+        "label": "Original 550-run aggregate summary",
+        "path": "final_tables/summary_by_task_model_method.csv"
+      },
+      {
+        "id": "pilot_runs",
+        "label": "Targeted pilot run-level results",
+        "path": "results/followup/collapse_followup_v2_pilot/aggregate/all_runs.csv"
+      },
+      {
+        "id": "full_runs",
+        "label": "Targeted full-data run-level results",
+        "path": "results/followup/collapse_followup_v2_full/aggregate/all_runs.csv"
+      },
+      {
+        "id": "followup_plan",
+        "label": "Follow-up experiment specification",
+        "path": "config/collapse_followup.json"
+      },
+      {
+        "id": "analysis_code",
+        "label": "Collapse diagnostics and exact paired statistics",
+        "path": "src/result_analysis.py"
+      },
+      {
+        "id": "training_code",
+        "label": "Training and weighted-loss implementation",
+        "path": "src/suite.py"
+      },
+      {
+        "id": "original_environment",
+        "label": "Original experiment environment",
+        "path": "results/environment.json"
+      },
+      {
+        "id": "followup_environment",
+        "label": "Full-data follow-up environment",
+        "path": "results/followup/collapse_followup_v2_full/environment.json"
+      },
+      {
+        "id": "followup_provenance",
+        "label": "Model revisions and dataset split fingerprints",
+        "path": "results/followup/provenance.json"
+      },
+      {
+        "id": "original_headline_query",
+        "label": "Exact-zero row count query",
+        "path": "tools/build_paper_followup_report.py",
+        "query": {
+          "id": "original_headline_query",
+          "engine": "sqlite",
+          "sql": "SELECT COUNT(*) AS zero_rows\nFROM original_zero_sd",
+          "description": "Counts the original aggregate rows diagnosed as exact-zero Macro-F1 SD.",
+          "tables_used": [
+            "original_zero_sd"
+          ],
+          "filters": [],
+          "metric_definitions": [
+            "zero_rows = COUNT(*) over the exact-zero diagnosis table"
+          ],
+          "executed_at": "2026-08-12T19:50:30+09:00"
+        }
+      },
+      {
+        "id": "pilot_headline_query",
+        "label": "Pilot collapse-recovery query",
+        "path": "tools/build_paper_followup_report.py",
+        "query": {
+          "id": "pilot_headline_query",
+          "engine": "sqlite",
+          "sql": "SELECT COUNT(*) AS recovered_conditions\nFROM pilot_summary AS baseline\nJOIN pilot_summary AS remedy\n  ON baseline.task = remedy.task\n AND baseline.model = remedy.model\n AND baseline.method = remedy.method\nWHERE baseline.variant = 'baseline'\n  AND remedy.variant = 'higher_lr_weighted'\n  AND baseline.collapsed_runs > remedy.collapsed_runs\n  AND remedy.f1_mean > baseline.f1_mean",
+          "description": "Counts paired pilot conditions where the combined remedy reduced collapsed runs and increased mean Macro-F1.",
+          "tables_used": [
+            "pilot_summary"
+          ],
+          "filters": [
+            "baseline variant = baseline",
+            "remedy variant = higher_lr_weighted"
+          ],
+          "metric_definitions": [
+            "recovered_conditions requires fewer collapsed runs and positive mean Macro-F1 change"
+          ],
+          "executed_at": "2026-08-12T19:50:30+09:00"
+        }
+      },
+      {
+        "id": "full_headline_query",
+        "label": "Full-data recovery query",
+        "path": "tools/build_paper_followup_report.py",
+        "query": {
+          "id": "full_headline_query",
+          "engine": "sqlite",
+          "sql": "SELECT\n  SUM(CASE WHEN baseline_collapse_runs > remedy_collapse_runs AND delta_mean > 0 THEN 1 ELSE 0 END)\n    AS recovered_conditions,\n  SUM(CASE WHEN treatment_better_seeds = 5 THEN 1 ELSE 0 END)\n    AS all_positive_conditions\nFROM full_paired_comparison",
+          "description": "Counts full-data conditions with collapse reduction and conditions improved in every paired seed.",
+          "tables_used": [
+            "full_paired_comparison"
+          ],
+          "filters": [],
+          "metric_definitions": [
+            "recovered_conditions requires fewer collapsed runs and delta_mean > 0",
+            "all_positive_conditions requires treatment_better_seeds = 5"
+          ],
+          "executed_at": "2026-08-12T19:50:30+09:00"
+        }
+      },
+      {
+        "id": "original_table_query",
+        "label": "Original zero-SD evidence table query",
+        "path": "tools/build_paper_followup_report.py",
+        "query": {
+          "id": "original_table_query",
+          "engine": "sqlite",
+          "sql": "SELECT condition, macro_f1_mean_sd, fingerprint, interpretation\nFROM original_zero_sd\nORDER BY condition",
+          "description": "Selects the four exact-zero rows and their constant-class fingerprint diagnosis.",
+          "tables_used": [
+            "original_zero_sd"
+          ],
+          "filters": [],
+          "metric_definitions": [],
+          "executed_at": "2026-08-12T19:50:30+09:00"
+        }
+      },
+      {
+        "id": "pilot_table_query",
+        "label": "Pilot ablation evidence table query",
+        "path": "tools/build_paper_followup_report.py",
+        "query": {
+          "id": "pilot_table_query",
+          "engine": "sqlite",
+          "sql": "SELECT variant_label, macro_f1_mean_sd, collapse_runs_display, full_coverage_display\nFROM pilot_adapter_ablation\nORDER BY CASE variant\n  WHEN 'baseline' THEN 0\n  WHEN 'longer' THEN 1\n  WHEN 'weighted' THEN 2\n  WHEN 'longer_weighted' THEN 3\n  WHEN 'higher_lr' THEN 4\n  WHEN 'higher_lr_weighted' THEN 5\nEND",
+          "description": "Selects the six pilot Adapter ablation variants in experimental order.",
+          "tables_used": [
+            "pilot_adapter_ablation"
+          ],
+          "filters": [
+            "task = finance_sentiment",
+            "model = FacebookAI/roberta-base",
+            "method = adapter"
+          ],
+          "metric_definitions": [],
+          "executed_at": "2026-08-12T19:50:30+09:00"
+        }
+      },
+      {
+        "id": "full_chart_query",
+        "label": "Full-data baseline-remedy chart query",
+        "path": "tools/build_paper_followup_report.py",
+        "query": {
+          "id": "full_chart_query",
+          "engine": "sqlite",
+          "sql": "SELECT\n  condition_short, condition, task, model, method, configuration,\n  macro_f1, f1_sd, collapse_runs, majority_prediction_rate,\n  seed_count, train_rows, test_rows\nFROM full_chart_comparison\nORDER BY condition_short,\n         CASE configuration WHEN 'Baseline' THEN 0 ELSE 1 END",
+          "description": "Selects long-form baseline and combined-remedy Macro-F1 rows for the four targeted conditions.",
+          "tables_used": [
+            "full_chart_comparison"
+          ],
+          "filters": [],
+          "metric_definitions": [
+            "macro_f1 = mean test Macro-F1 across seeds 42, 52, 62, 72, and 82"
+          ],
+          "executed_at": "2026-08-12T19:50:30+09:00"
+        }
+      },
+      {
+        "id": "full_table_query",
+        "label": "Full-data paired comparison table query",
+        "path": "tools/build_paper_followup_report.py",
+        "query": {
+          "id": "full_table_query",
+          "engine": "sqlite",
+          "sql": "SELECT\n  condition, baseline_mean_sd, remedy_mean_sd, delta_mean, delta_ci95,\n  baseline_collapse_display, remedy_collapse_display, better_seeds_display,\n  baseline_majority_display, remedy_majority_display, remedy_full_coverage_display,\n  baseline_epochs_completed_mean, remedy_epochs_completed_mean,\n  train_time_multiplier, train_time_multiplier_display,\n  train_rows, test_rows, exact_sign_flip_p_two_sided\nFROM full_paired_comparison\nORDER BY delta_mean DESC",
+          "description": "Selects paired effect sizes, uncertainty, collapse diagnostics, seed direction, and compute cost.",
+          "tables_used": [
+            "full_paired_comparison"
+          ],
+          "filters": [],
+          "metric_definitions": [
+            "delta_mean = mean paired remedy-minus-baseline Macro-F1",
+            "delta_ci95 = paired t interval across five seed differences",
+            "exact_sign_flip_p_two_sided = exact two-sided sign-flip p-value"
+          ],
+          "executed_at": "2026-08-12T19:50:30+09:00"
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# 표준편차 0 진단 및 붕괴 후속 재학습 보고서"
+      },
+      {
+        "id": "technical_summary",
+        "type": "markdown",
+        "body": "## 핵심 결론\n\n원본의 표준편차 0 네 행은 constant-class prediction 공식과 일치하는 aggregate fingerprint다. 원본 prediction 부재 때문에 과거 run의 실제 예측을 직접 확인한 것은 아니다. 후속 실험은 예측 클래스 수와 최빈 예측 비율을 함께 기록하여 현재 run의 정상적인 seed 안정성과 붕괴를 직접 구분한다."
+      },
+      {
+        "id": "headline_metrics",
+        "type": "metric-strip",
+        "cardIds": [
+          "original_zero_rows",
+          "pilot_recovery",
+          "full_recovery"
+        ]
+      },
+      {
+        "id": "original_heading",
+        "type": "markdown",
+        "sourceId": "original_summary",
+        "body": "## 원본 집계의 4개 exact-zero 행은 constant-class 지문과 정확히 일치\n\n소수점 표시 문제가 아니다. 저장된 전체 정밀도에서 SD가 정확히 0이고, accuracy·macro precision·macro recall·macro F1의 조합이 단일 클래스 예측 공식과 일치한다."
+      },
+      {
+        "id": "original_evidence",
+        "type": "table",
+        "tableId": "original_table",
+        "layout": "full"
+      },
+      {
+        "id": "pilot_heading",
+        "type": "markdown",
+        "sourceId": "pilot_runs",
+        "body": "## 제한 데이터 파일럿의 탐색적 비교\n\n네 조건의 baseline 20개 run이 모두 constant-class collapse를 직접 보였다. 이는 원본 과거 실행의 동일 재현이 아니다. Adapter 비교에서는 epoch 연장, class weighting, 높은 learning rate를 단독 또는 일부 결합했을 때 붕괴가 남았고, 세 요소를 함께 적용한 조건에서만 5개 seed 모두 세 클래스를 예측했다. 실행 순서가 prospectively ordered ablation이 아니므로 사후 탐색으로 해석한다."
+      },
+      {
+        "id": "pilot_evidence",
+        "type": "table",
+        "tableId": "pilot_table",
+        "layout": "full"
+      },
+      {
+        "id": "full_heading",
+        "type": "markdown",
+        "sourceId": "full_runs",
+        "body": "## 전체 데이터 결과는 동일 seed paired 비교로 평가\n\n표의 평균과 표본 표준편차는 다섯 seed에서 계산했다. 개선 조건은 early stopping을 포함한 최대 5 epoch, 더 높은 method-specific learning rate, inverse-square-root-frequency class weighting을 동시에 사용한다."
+      },
+      {
+        "id": "full_chart",
+        "type": "chart",
+        "chartId": "full_f1_comparison",
+        "layout": "full"
+      },
+      {
+        "id": "full_evidence",
+        "type": "table",
+        "tableId": "full_table",
+        "layout": "full"
+      },
+      {
+        "id": "design",
+        "type": "markdown",
+        "sourceId": "followup_plan",
+        "body": "## 실험 설계와 metric 정의\n\n기준선은 원본 Study 2의 2-epoch, unweighted loss, method-specific learning rate 설정이다. 개선 조건은 최대 5 epoch와 기존 early stopping을 함께 사용한다. 붕괴는 테스트 예측 클래스 수가 1인 경우, near-collapse는 최빈 예측 비율이 0.98 이상인 경우로 operationally 정의했다. 주 지표는 테스트 Macro-F1이다."
+      },
+      {
+        "id": "weighting",
+        "type": "markdown",
+        "sourceId": "training_code",
+        "body": "### 결합 개선 조건 구현\n\nClass weight는 각 train label count n_c에 대해 n_c^{-1/2}를 계산한 뒤 평균이 1이 되도록 정규화하여 cross-entropy에 적용했다. Optimizer와 scheduler는 각각 adamw_torch와 linear로 명시했다."
+      },
+      {
+        "id": "limitations_scope",
+        "type": "markdown",
+        "sourceId": "followup_plan",
+        "body": "## 논문 해석 한계\n\n이번 후속 실험은 네 개의 문제 조건과 다섯 seed에 한정된 진단 실험이다. 결합 개선 조건은 세 개의 변경을 동시에 포함하므로, 전체 데이터 비교만으로 개별 요소의 인과 효과를 분리할 수 없다."
+      },
+      {
+        "id": "limitations_inference",
+        "type": "markdown",
+        "sourceId": "analysis_code",
+        "body": "### 소표본 추론 한계\n\n95% CI는 paired seed 차이의 t interval이다. n=5 exact sign-flip 검정의 가능한 최소 양측 p-value는 0.0625이므로 관례적 0.05 유의성을 주장하지 않는다. 네 조건의 p-value는 탐색적이며 multiplicity adjustment를 적용하지 않았다. 결과는 효과 크기, seed 방향 일관성, 붕괴율과 함께 기술해야 한다."
+      },
+      {
+        "id": "original_runtime",
+        "type": "markdown",
+        "sourceId": "original_environment",
+        "body": "### 원본 실행 환경과 증거 한계\n\n원본 집계는 CUDA GPU와 별도의 PyTorch build에서 생성되었다. 원본 run-level predictions가 공개 패키지에 없으므로 원본 붕괴 판정은 aggregate metric fingerprint에 근거하며, 현재 baseline과 비트 단위 동일성도 검증할 수 없다."
+      },
+      {
+        "id": "followup_runtime",
+        "type": "markdown",
+        "sourceId": "followup_environment",
+        "body": "### 후속 실행 환경\n\n후속 실험은 Apple MPS와 별도의 PyTorch build에서 실행했다. 따라서 원본 aggregate와 현재 baseline의 차이는 환경 차이를 포함하며, 개선 효과는 현재 환경 내부의 동일 seed paired 비교를 우선 해석한다."
+      },
+      {
+        "id": "provenance",
+        "type": "markdown",
+        "sourceId": "followup_provenance",
+        "body": "### 재현 provenance\n\n후속 결과에는 사용한 두 base model의 Hugging Face commit과 pilot/full dataset split fingerprint를 별도 저장했다. Split seed는 42로 고정했다."
+      },
+      {
+        "id": "next_steps",
+        "type": "markdown",
+        "body": "## 권장 다음 실험\n\n전체 데이터에서 learning rate × class weighting × epoch의 factorial ablation을 수행하고, validation Macro-F1·prediction entropy·per-class recall을 checkpoint별로 저장한다. 그 결과가 확보되기 전까지는 결합 개선 조건이 붕괴를 완화했다는 기술적 사실까지만 주장한다."
+      },
+      {
+        "id": "questions",
+        "type": "markdown",
+        "body": "## 남은 질문\n\n- CUDA 원 실행 환경에서 동일 후속 조건이 재현되는가?\n- BERTweet LoRA의 높은 seed 변동은 initialization, class imbalance, 또는 early stopping 중 무엇이 주도하는가?\n- 예측 붕괴를 validation 단계에서 자동 중단·재시작하는 기준은 어떤 threshold가 적절한가?"
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-12T19:50:30+09:00",
+    "status": "ready",
+    "datasets": {
+      "headline_original": [
+        {
+          "zero_rows": 4
+        }
+      ],
+      "headline_pilot": [
+        {
+          "recovered_conditions": 4
+        }
+      ],
+      "headline_full": [
+        {
+          "recovered_conditions": 4,
+          "all_positive_conditions": 4
+        }
+      ],
+      "original_rows": [
+        {
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / Adapter",
+          "macro_f1_mean_sd": "0.2482 ± 0.0000",
+          "fingerprint": "Yes",
+          "interpretation": "Aggregate consistent with constant-class collapse"
+        },
+        {
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / BitFit",
+          "macro_f1_mean_sd": "0.2482 ± 0.0000",
+          "fingerprint": "Yes",
+          "interpretation": "Aggregate consistent with constant-class collapse"
+        },
+        {
+          "condition": "TweetEval emotion / FacebookAI/roberta-base / BitFit",
+          "macro_f1_mean_sd": "0.1410 ± 0.0000",
+          "fingerprint": "Yes",
+          "interpretation": "Aggregate consistent with constant-class collapse"
+        },
+        {
+          "condition": "TweetEval emotion / vinai/bertweet-base / LoRA",
+          "macro_f1_mean_sd": "0.1410 ± 0.0000",
+          "fingerprint": "Yes",
+          "interpretation": "Aggregate consistent with constant-class collapse"
+        }
+      ],
+      "pilot_rows": [
+        {
+          "variant_label": "Baseline (2 ep.)",
+          "macro_f1_mean_sd": "0.2482 ± 0.0000",
+          "collapse_runs_display": "5/5",
+          "full_coverage_display": "0/5"
+        },
+        {
+          "variant_label": "Longer (max 5 ep.)",
+          "macro_f1_mean_sd": "0.2482 ± 0.0000",
+          "collapse_runs_display": "5/5",
+          "full_coverage_display": "0/5"
+        },
+        {
+          "variant_label": "Weighted (2 ep.)",
+          "macro_f1_mean_sd": "0.2482 ± 0.0000",
+          "collapse_runs_display": "5/5",
+          "full_coverage_display": "0/5"
+        },
+        {
+          "variant_label": "Longer + weighted (max 5 ep.)",
+          "macro_f1_mean_sd": "0.2482 ± 0.0000",
+          "collapse_runs_display": "5/5",
+          "full_coverage_display": "0/5"
+        },
+        {
+          "variant_label": "Higher LR (2 ep.)",
+          "macro_f1_mean_sd": "0.2482 ± 0.0000",
+          "collapse_runs_display": "5/5",
+          "full_coverage_display": "0/5"
+        },
+        {
+          "variant_label": "Higher LR + weighted (max 5 ep.)",
+          "macro_f1_mean_sd": "0.8040 ± 0.0063",
+          "collapse_runs_display": "0/5",
+          "full_coverage_display": "5/5"
+        }
+      ],
+      "full_chart_rows": [
+        {
+          "condition_short": "Emotion / BERTweet LoRA",
+          "condition": "TweetEval emotion / vinai/bertweet-base / LoRA",
+          "task": "tweet_emotion",
+          "model": "vinai/bertweet-base",
+          "method": "lora",
+          "configuration": "Baseline",
+          "macro_f1": 0.1409802930773116,
+          "f1_sd": 0.0,
+          "collapse_runs": 5,
+          "majority_prediction_rate": 1.0,
+          "seed_count": 5,
+          "train_rows": 3257,
+          "test_rows": 1421
+        },
+        {
+          "condition_short": "Emotion / BERTweet LoRA",
+          "condition": "TweetEval emotion / vinai/bertweet-base / LoRA",
+          "task": "tweet_emotion",
+          "model": "vinai/bertweet-base",
+          "method": "lora",
+          "configuration": "Combined remedy",
+          "macro_f1": 0.7839783253801668,
+          "f1_sd": 0.0036653064501268,
+          "collapse_runs": 0,
+          "majority_prediction_rate": 0.3814215341308936,
+          "seed_count": 5,
+          "train_rows": 3257,
+          "test_rows": 1421
+        },
+        {
+          "condition_short": "Emotion / RoBERTa BitFit",
+          "condition": "TweetEval emotion / FacebookAI/roberta-base / BitFit",
+          "task": "tweet_emotion",
+          "model": "FacebookAI/roberta-base",
+          "method": "bitfit",
+          "configuration": "Baseline",
+          "macro_f1": 0.1409802930773116,
+          "f1_sd": 0.0,
+          "collapse_runs": 5,
+          "majority_prediction_rate": 1.0,
+          "seed_count": 5,
+          "train_rows": 3257,
+          "test_rows": 1421
+        },
+        {
+          "condition_short": "Emotion / RoBERTa BitFit",
+          "condition": "TweetEval emotion / FacebookAI/roberta-base / BitFit",
+          "task": "tweet_emotion",
+          "model": "FacebookAI/roberta-base",
+          "method": "bitfit",
+          "configuration": "Combined remedy",
+          "macro_f1": 0.7645885780829886,
+          "f1_sd": 0.00559394819183,
+          "collapse_runs": 0,
+          "majority_prediction_rate": 0.3874736101337086,
+          "seed_count": 5,
+          "train_rows": 3257,
+          "test_rows": 1421
+        },
+        {
+          "condition_short": "Finance / Adapter",
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / Adapter",
+          "task": "finance_sentiment",
+          "model": "FacebookAI/roberta-base",
+          "method": "adapter",
+          "configuration": "Baseline",
+          "macro_f1": 0.275895540674254,
+          "f1_sd": 0.0338333564022783,
+          "collapse_runs": 2,
+          "majority_prediction_rate": 0.9764462809917354,
+          "seed_count": 5,
+          "train_rows": 3872,
+          "test_rows": 484
+        },
+        {
+          "condition_short": "Finance / Adapter",
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / Adapter",
+          "task": "finance_sentiment",
+          "model": "FacebookAI/roberta-base",
+          "method": "adapter",
+          "configuration": "Combined remedy",
+          "macro_f1": 0.8485647622439176,
+          "f1_sd": 0.0087041239454199,
+          "collapse_runs": 0,
+          "majority_prediction_rate": 0.5458677685950412,
+          "seed_count": 5,
+          "train_rows": 3872,
+          "test_rows": 484
+        },
+        {
+          "condition_short": "Finance / BitFit",
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / BitFit",
+          "task": "finance_sentiment",
+          "model": "FacebookAI/roberta-base",
+          "method": "bitfit",
+          "configuration": "Baseline",
+          "macro_f1": 0.248162559446606,
+          "f1_sd": 0.0,
+          "collapse_runs": 5,
+          "majority_prediction_rate": 1.0,
+          "seed_count": 5,
+          "train_rows": 3872,
+          "test_rows": 484
+        },
+        {
+          "condition_short": "Finance / BitFit",
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / BitFit",
+          "task": "finance_sentiment",
+          "model": "FacebookAI/roberta-base",
+          "method": "bitfit",
+          "configuration": "Combined remedy",
+          "macro_f1": 0.8347711199689438,
+          "f1_sd": 0.0085292303746566,
+          "collapse_runs": 0,
+          "majority_prediction_rate": 0.5520661157024793,
+          "seed_count": 5,
+          "train_rows": 3872,
+          "test_rows": 484
+        }
+      ],
+      "full_rows": [
+        {
+          "condition": "TweetEval emotion / vinai/bertweet-base / LoRA",
+          "baseline_mean_sd": "0.1410 ± 0.0000",
+          "remedy_mean_sd": "0.7840 ± 0.0037",
+          "delta_mean": 0.6429980323028552,
+          "delta_ci95": "+0.6430 [+0.6384, +0.6475]",
+          "baseline_collapse_display": "5/5",
+          "remedy_collapse_display": "0/5",
+          "better_seeds_display": "5/5",
+          "baseline_majority_display": "1.000",
+          "remedy_majority_display": "0.381",
+          "remedy_full_coverage_display": "5/5",
+          "baseline_epochs_completed_mean": 2.0,
+          "remedy_epochs_completed_mean": 5.0,
+          "train_time_multiplier": 2.523536439147998,
+          "train_time_multiplier_display": "2.52×",
+          "train_rows": 3257,
+          "test_rows": 1421,
+          "exact_sign_flip_p_two_sided": 0.0625
+        },
+        {
+          "condition": "TweetEval emotion / FacebookAI/roberta-base / BitFit",
+          "baseline_mean_sd": "0.1410 ± 0.0000",
+          "remedy_mean_sd": "0.7646 ± 0.0056",
+          "delta_mean": 0.623608285005677,
+          "delta_ci95": "+0.6236 [+0.6167, +0.6306]",
+          "baseline_collapse_display": "5/5",
+          "remedy_collapse_display": "0/5",
+          "better_seeds_display": "5/5",
+          "baseline_majority_display": "1.000",
+          "remedy_majority_display": "0.387",
+          "remedy_full_coverage_display": "5/5",
+          "baseline_epochs_completed_mean": 2.0,
+          "remedy_epochs_completed_mean": 5.0,
+          "train_time_multiplier": 2.5576912081133396,
+          "train_time_multiplier_display": "2.56×",
+          "train_rows": 3257,
+          "test_rows": 1421,
+          "exact_sign_flip_p_two_sided": 0.0625
+        },
+        {
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / BitFit",
+          "baseline_mean_sd": "0.2482 ± 0.0000",
+          "remedy_mean_sd": "0.8348 ± 0.0085",
+          "delta_mean": 0.5866085605223379,
+          "delta_ci95": "+0.5866 [+0.5760, +0.5972]",
+          "baseline_collapse_display": "5/5",
+          "remedy_collapse_display": "0/5",
+          "better_seeds_display": "5/5",
+          "baseline_majority_display": "1.000",
+          "remedy_majority_display": "0.552",
+          "remedy_full_coverage_display": "5/5",
+          "baseline_epochs_completed_mean": 2.0,
+          "remedy_epochs_completed_mean": 4.6,
+          "train_time_multiplier": 2.3215839112234207,
+          "train_time_multiplier_display": "2.32×",
+          "train_rows": 3872,
+          "test_rows": 484,
+          "exact_sign_flip_p_two_sided": 0.0625
+        },
+        {
+          "condition": "FinancialPhraseBank sentiment / FacebookAI/roberta-base / Adapter",
+          "baseline_mean_sd": "0.2759 ± 0.0338",
+          "remedy_mean_sd": "0.8486 ± 0.0087",
+          "delta_mean": 0.5726692215696636,
+          "delta_ci95": "+0.5727 [+0.5239, +0.6215]",
+          "baseline_collapse_display": "2/5",
+          "remedy_collapse_display": "0/5",
+          "better_seeds_display": "5/5",
+          "baseline_majority_display": "0.976",
+          "remedy_majority_display": "0.546",
+          "remedy_full_coverage_display": "5/5",
+          "baseline_epochs_completed_mean": 2.0,
+          "remedy_epochs_completed_mean": 4.8,
+          "train_time_multiplier": 2.3415506743040084,
+          "train_time_multiplier_display": "2.34×",
+          "train_rows": 3872,
+          "test_rows": 484,
+          "exact_sign_flip_p_two_sided": 0.0625
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "original_summary",
+      "label": "Original 550-run aggregate summary",
+      "path": "final_tables/summary_by_task_model_method.csv"
+    },
+    {
+      "id": "pilot_runs",
+      "label": "Targeted pilot run-level results",
+      "path": "results/followup/collapse_followup_v2_pilot/aggregate/all_runs.csv"
+    },
+    {
+      "id": "full_runs",
+      "label": "Targeted full-data run-level results",
+      "path": "results/followup/collapse_followup_v2_full/aggregate/all_runs.csv"
+    },
+    {
+      "id": "followup_plan",
+      "label": "Follow-up experiment specification",
+      "path": "config/collapse_followup.json"
+    },
+    {
+      "id": "analysis_code",
+      "label": "Collapse diagnostics and exact paired statistics",
+      "path": "src/result_analysis.py"
+    },
+    {
+      "id": "training_code",
+      "label": "Training and weighted-loss implementation",
+      "path": "src/suite.py"
+    },
+    {
+      "id": "original_environment",
+      "label": "Original experiment environment",
+      "path": "results/environment.json"
+    },
+    {
+      "id": "followup_environment",
+      "label": "Full-data follow-up environment",
+      "path": "results/followup/collapse_followup_v2_full/environment.json"
+    },
+    {
+      "id": "followup_provenance",
+      "label": "Model revisions and dataset split fingerprints",
+      "path": "results/followup/provenance.json"
+    },
+    {
+      "id": "original_headline_query",
+      "label": "Exact-zero row count query",
+      "path": "tools/build_paper_followup_report.py",
+      "query": {
+        "id": "original_headline_query",
+        "engine": "sqlite",
+        "sql": "SELECT COUNT(*) AS zero_rows\nFROM original_zero_sd",
+        "description": "Counts the original aggregate rows diagnosed as exact-zero Macro-F1 SD.",
+        "tables_used": [
+          "original_zero_sd"
+        ],
+        "filters": [],
+        "metric_definitions": [
+          "zero_rows = COUNT(*) over the exact-zero diagnosis table"
+        ],
+        "executed_at": "2026-08-12T19:50:30+09:00"
+      }
+    },
+    {
+      "id": "pilot_headline_query",
+      "label": "Pilot collapse-recovery query",
+      "path": "tools/build_paper_followup_report.py",
+      "query": {
+        "id": "pilot_headline_query",
+        "engine": "sqlite",
+        "sql": "SELECT COUNT(*) AS recovered_conditions\nFROM pilot_summary AS baseline\nJOIN pilot_summary AS remedy\n  ON baseline.task = remedy.task\n AND baseline.model = remedy.model\n AND baseline.method = remedy.method\nWHERE baseline.variant = 'baseline'\n  AND remedy.variant = 'higher_lr_weighted'\n  AND baseline.collapsed_runs > remedy.collapsed_runs\n  AND remedy.f1_mean > baseline.f1_mean",
+        "description": "Counts paired pilot conditions where the combined remedy reduced collapsed runs and increased mean Macro-F1.",
+        "tables_used": [
+          "pilot_summary"
+        ],
+        "filters": [
+          "baseline variant = baseline",
+          "remedy variant = higher_lr_weighted"
+        ],
+        "metric_definitions": [
+          "recovered_conditions requires fewer collapsed runs and positive mean Macro-F1 change"
+        ],
+        "executed_at": "2026-08-12T19:50:30+09:00"
+      }
+    },
+    {
+      "id": "full_headline_query",
+      "label": "Full-data recovery query",
+      "path": "tools/build_paper_followup_report.py",
+      "query": {
+        "id": "full_headline_query",
+        "engine": "sqlite",
+        "sql": "SELECT\n  SUM(CASE WHEN baseline_collapse_runs > remedy_collapse_runs AND delta_mean > 0 THEN 1 ELSE 0 END)\n    AS recovered_conditions,\n  SUM(CASE WHEN treatment_better_seeds = 5 THEN 1 ELSE 0 END)\n    AS all_positive_conditions\nFROM full_paired_comparison",
+        "description": "Counts full-data conditions with collapse reduction and conditions improved in every paired seed.",
+        "tables_used": [
+          "full_paired_comparison"
+        ],
+        "filters": [],
+        "metric_definitions": [
+          "recovered_conditions requires fewer collapsed runs and delta_mean > 0",
+          "all_positive_conditions requires treatment_better_seeds = 5"
+        ],
+        "executed_at": "2026-08-12T19:50:30+09:00"
+      }
+    },
+    {
+      "id": "original_table_query",
+      "label": "Original zero-SD evidence table query",
+      "path": "tools/build_paper_followup_report.py",
+      "query": {
+        "id": "original_table_query",
+        "engine": "sqlite",
+        "sql": "SELECT condition, macro_f1_mean_sd, fingerprint, interpretation\nFROM original_zero_sd\nORDER BY condition",
+        "description": "Selects the four exact-zero rows and their constant-class fingerprint diagnosis.",
+        "tables_used": [
+          "original_zero_sd"
+        ],
+        "filters": [],
+        "metric_definitions": [],
+        "executed_at": "2026-08-12T19:50:30+09:00"
+      }
+    },
+    {
+      "id": "pilot_table_query",
+      "label": "Pilot ablation evidence table query",
+      "path": "tools/build_paper_followup_report.py",
+      "query": {
+        "id": "pilot_table_query",
+        "engine": "sqlite",
+        "sql": "SELECT variant_label, macro_f1_mean_sd, collapse_runs_display, full_coverage_display\nFROM pilot_adapter_ablation\nORDER BY CASE variant\n  WHEN 'baseline' THEN 0\n  WHEN 'longer' THEN 1\n  WHEN 'weighted' THEN 2\n  WHEN 'longer_weighted' THEN 3\n  WHEN 'higher_lr' THEN 4\n  WHEN 'higher_lr_weighted' THEN 5\nEND",
+        "description": "Selects the six pilot Adapter ablation variants in experimental order.",
+        "tables_used": [
+          "pilot_adapter_ablation"
+        ],
+        "filters": [
+          "task = finance_sentiment",
+          "model = FacebookAI/roberta-base",
+          "method = adapter"
+        ],
+        "metric_definitions": [],
+        "executed_at": "2026-08-12T19:50:30+09:00"
+      }
+    },
+    {
+      "id": "full_chart_query",
+      "label": "Full-data baseline-remedy chart query",
+      "path": "tools/build_paper_followup_report.py",
+      "query": {
+        "id": "full_chart_query",
+        "engine": "sqlite",
+        "sql": "SELECT\n  condition_short, condition, task, model, method, configuration,\n  macro_f1, f1_sd, collapse_runs, majority_prediction_rate,\n  seed_count, train_rows, test_rows\nFROM full_chart_comparison\nORDER BY condition_short,\n         CASE configuration WHEN 'Baseline' THEN 0 ELSE 1 END",
+        "description": "Selects long-form baseline and combined-remedy Macro-F1 rows for the four targeted conditions.",
+        "tables_used": [
+          "full_chart_comparison"
+        ],
+        "filters": [],
+        "metric_definitions": [
+          "macro_f1 = mean test Macro-F1 across seeds 42, 52, 62, 72, and 82"
+        ],
+        "executed_at": "2026-08-12T19:50:30+09:00"
+      }
+    },
+    {
+      "id": "full_table_query",
+      "label": "Full-data paired comparison table query",
+      "path": "tools/build_paper_followup_report.py",
+      "query": {
+        "id": "full_table_query",
+        "engine": "sqlite",
+        "sql": "SELECT\n  condition, baseline_mean_sd, remedy_mean_sd, delta_mean, delta_ci95,\n  baseline_collapse_display, remedy_collapse_display, better_seeds_display,\n  baseline_majority_display, remedy_majority_display, remedy_full_coverage_display,\n  baseline_epochs_completed_mean, remedy_epochs_completed_mean,\n  train_time_multiplier, train_time_multiplier_display,\n  train_rows, test_rows, exact_sign_flip_p_two_sided\nFROM full_paired_comparison\nORDER BY delta_mean DESC",
+        "description": "Selects paired effect sizes, uncertainty, collapse diagnostics, seed direction, and compute cost.",
+        "tables_used": [
+          "full_paired_comparison"
+        ],
+        "filters": [],
+        "metric_definitions": [
+          "delta_mean = mean paired remedy-minus-baseline Macro-F1",
+          "delta_ci95 = paired t interval across five seed differences",
+          "exact_sign_flip_p_two_sided = exact two-sided sign-flip p-value"
+        ],
+        "executed_at": "2026-08-12T19:50:30+09:00"
+      }
+    }
+  ]
+}

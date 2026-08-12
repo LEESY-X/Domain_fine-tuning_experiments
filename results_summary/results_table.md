@@ -44,6 +44,8 @@
 
 `most_stable_method`는 seed별 `f1_sd`가 가장 낮은 method를 의미한다.
 
+> 주의: 아래 표는 원본 파일의 단일-winner 순위를 그대로 보존한 것이다. 세 task/model 행의 1위 방법은 constant-class prediction fingerprint와 일치하는 exact-zero SD 행이므로 바람직한 안정성으로 해석할 수 없다. Finance/RoBERTa의 Adapter와 BitFit은 exact tie지만 원본 표는 행 순서로 BitFit 하나를 표시한다. 원본 prediction이 없어 과거 collapse를 직접 확인한 것은 아니며, 진단과 sensitivity analysis는 `variance_diagnostics.md`와 `key_insights.md`를 참조한다.
+
 | 안정성 1위 method | 횟수 | 출처 파일 |
 |---|---:|---|
 | BitFit | 10 | `final_tables/winners_by_metric.csv` |

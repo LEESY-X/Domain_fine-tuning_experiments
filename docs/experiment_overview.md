@@ -59,7 +59,7 @@
 | `movie_nsmc` | raw GitHub TSV via `e9t/nsmc` | `direct="nsmc"` | `document` | `label` | 2 | `src/suite.py` |
 | `comment_kmhas_binary` | raw GitHub TSV via `adlnlp/K-MHaS` | `direct="kmhas"` | `text` | `label` | 2 | `src/suite.py` |
 
-데이터 공개 가능 여부는 각 원천 데이터셋의 라이선스와 Hugging Face/GitHub 원천 약관을 별도로 확인해야 한다. 본 저장소에는 cache와 checkpoint가 포함되어 있어 공개 전 데이터 재배포 가능성 검토가 필요하다.
+데이터 공개 가능 여부는 각 원천 데이터셋의 라이선스와 Hugging Face/GitHub 원천 약관을 별도로 확인해야 한다. 본 저장소는 dataset cache와 model checkpoint를 제외하며, 후속 실험의 sample ID·정답·예측값만 보존한다.
 
 ## 5. 평가 방식
 
@@ -73,6 +73,8 @@
 | `macro_recall` | class별 recall의 macro average | `src/suite.py` |
 
 최종 요약 문서는 `macro_f1`, 학습 시간(`train_seconds_mean`), 학습 파라미터 비율(`trainable_ratio_mean`), seed별 표준편차(`f1_sd`)를 중심으로 결과를 해석한다.
+
+후속 실험은 `predicted_class_count`, `majority_prediction_rate`, `normalized_prediction_entropy`를 추가로 기록한다. 표준편차가 낮더라도 예측 클래스 수가 1이면 constant-class collapse로 분리한다.
 
 ## 6. 주요 결과
 

@@ -1,0 +1,71 @@
+{
+  "experiment_id": "collapse_followup_v2",
+  "purpose": "Distinguish under-training and class-imbalance collapse from genuine seed stability.",
+  "seeds": [42, 52, 62, 72, 82],
+  "pilot_limits": {"train": 1024, "validation": 512, "test": 2048},
+  "keep_checkpoints": false,
+  "conditions": [
+    {
+      "id": "finance_roberta_adapter",
+      "study": "study2",
+      "task": "finance_sentiment",
+      "model": "FacebookAI/roberta-base",
+      "method": "adapter"
+    },
+    {
+      "id": "finance_roberta_bitfit",
+      "study": "study2",
+      "task": "finance_sentiment",
+      "model": "FacebookAI/roberta-base",
+      "method": "bitfit"
+    },
+    {
+      "id": "emotion_roberta_bitfit",
+      "study": "study2",
+      "task": "tweet_emotion",
+      "model": "FacebookAI/roberta-base",
+      "method": "bitfit"
+    },
+    {
+      "id": "emotion_bertweet_lora",
+      "study": "study2",
+      "task": "tweet_emotion",
+      "model": "vinai/bertweet-base",
+      "method": "lora"
+    }
+  ],
+  "variants": {
+    "baseline": {
+      "description": "Original 2-epoch method-specific learning rate and unweighted loss.",
+      "epochs": 2,
+      "class_weighting": "none"
+    },
+    "longer": {
+      "description": "Same loss and learning rate, with 5 requested epochs.",
+      "epochs": 5,
+      "class_weighting": "none"
+    },
+    "weighted": {
+      "description": "Original 2 epochs with inverse-square-root-frequency class weights.",
+      "epochs": 2,
+      "class_weighting": "inverse_sqrt_frequency"
+    },
+    "longer_weighted": {
+      "description": "Five requested epochs with inverse-square-root-frequency class weights.",
+      "epochs": 5,
+      "class_weighting": "inverse_sqrt_frequency"
+    },
+    "higher_lr": {
+      "description": "Original 2 epochs with a larger PEFT learning rate; isolates optimization speed.",
+      "epochs": 2,
+      "class_weighting": "none",
+      "learning_rates": {"adapter": 0.0005, "bitfit": 0.0005, "lora": 0.0003}
+    },
+    "higher_lr_weighted": {
+      "description": "Five requested epochs with larger PEFT learning rate and class weighting.",
+      "epochs": 5,
+      "class_weighting": "inverse_sqrt_frequency",
+      "learning_rates": {"adapter": 0.0005, "bitfit": 0.0005, "lora": 0.0003}
+    }
+  }
+}
