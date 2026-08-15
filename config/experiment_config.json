@@ -8,8 +8,14 @@
   "precision": "fp16",
   "weight_decay": 0.01,
   "warmup_ratio": 0.06,
+  "optimizer": "adamw_torch",
+  "lr_scheduler_type": "linear",
   "early_stopping_patience": 2,
   "dataloader_num_workers": 2,
+  "model_revisions": {
+    "FacebookAI/roberta-base": "e2da8e2f811d1448a5b465c236feacd80ffbac7b",
+    "vinai/bertweet-base": "b349c1243407b0dcffeabb2337497477286e27ab"
+  },
   "learning_rates": {
     "full_ft": 0.00002,
     "lora": 0.0001,

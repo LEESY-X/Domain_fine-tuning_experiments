@@ -1,0 +1,129 @@
+{
+  "status": "RUNNING",
+  "started_at": "2026-08-07T20:48:20+09:00",
+  "resumed_at": null,
+  "resume_count": 0,
+  "resumed_from_checkpoint": null,
+  "study": "study2",
+  "task": "finance_sentiment",
+  "model": "FacebookAI/roberta-base",
+  "method": "adapter",
+  "seed": 62,
+  "run_mode": "FOLLOWUP",
+  "experiment_id": "collapse_followup_v2_pilot",
+  "variant": "longer",
+  "run_signature": "addf7baed45eb356ee6034fc9997fac496447a0a88299f87618d1f78f507dc1a",
+  "epochs": 5,
+  "hyperparameters": {
+    "methods": [
+      "full_ft",
+      "lora",
+      "adapter",
+      "ia3",
+      "bitfit"
+    ],
+    "seeds": [
+      42,
+      52,
+      62,
+      72,
+      82
+    ],
+    "max_length": 128,
+    "batch_size": 16,
+    "eval_batch_size": 32,
+    "gradient_accumulation_steps": 4,
+    "precision": "fp16",
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.06,
+    "optimizer": "adamw_torch",
+    "lr_scheduler_type": "linear",
+    "early_stopping_patience": 2,
+    "dataloader_num_workers": 2,
+    "learning_rates": {
+      "full_ft": 2e-05,
+      "lora": 0.0001,
+      "adapter": 0.0001,
+      "ia3": 0.0005,
+      "bitfit": 0.0001
+    },
+    "lora": {
+      "r": 8,
+      "alpha": 16,
+      "dropout": 0.05
+    },
+    "adapter": {
+      "bottleneck": 64,
+      "dropout": 0.0
+    },
+    "study1": {
+      "epochs": 3,
+      "models": [
+        "vinai/bertweet-base"
+      ],
+      "tasks": [
+        "measuring_hate_speech"
+      ]
+    },
+    "study2": {
+      "epochs": 2,
+      "models": [
+        "vinai/bertweet-base",
+        "FacebookAI/roberta-base"
+      ],
+      "tasks": [
+        "tweet_sentiment",
+        "finance_sentiment",
+        "movie_reviews",
+        "product_reviews",
+        "tweet_emotion",
+        "tweet_hate",
+        "tweet_offensive",
+        "tweet_irony",
+        "news_topic"
+      ],
+      "limits": null
+    },
+    "study3": {
+      "epochs": 5,
+      "models": [
+        "klue/roberta-base"
+      ],
+      "tasks": [
+        "news_ynat",
+        "movie_nsmc",
+        "comment_kmhas_binary"
+      ]
+    },
+    "smoke_limits": {
+      "train": 128,
+      "validation": 64,
+      "test": 64
+    },
+    "keep_best_checkpoint": true,
+    "continue_on_error": false
+  },
+  "runtime": {
+    "time": "2026-08-07T20:48:23+09:00",
+    "python": "3.13.7 (v3.13.7:bcee1c32211, Aug 14 2025, 19:10:51) [Clang 16.0.0 (clang-1600.0.26.6)]",
+    "torch": "2.13.0",
+    "cuda_runtime": null,
+    "cuda_available": false,
+    "gpu": "CPU",
+    "gpu_memory_gb": 0
+  },
+  "model_commit": "e2da8e2f811d1448a5b465c236feacd80ffbac7b",
+  "trainable_params": 1782531,
+  "total_params": 125837571,
+  "trainable_parameter_ratio": 0.014165332228162604,
+  "training_overrides": {
+    "epochs": 5
+  },
+  "class_weighting": "none",
+  "class_weights": null,
+  "train_label_counts": [
+    128,
+    608,
+    288
+  ]
+}

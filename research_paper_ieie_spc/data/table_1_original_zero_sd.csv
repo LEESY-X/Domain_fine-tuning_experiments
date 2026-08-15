@@ -1,0 +1,5 @@
+﻿condition,task,model,method,seeds,num_labels,accuracy_mean,precision_mean,recall_mean,f1_mean,f1_sd,macro_f1_mean_sd,fingerprint,interpretation
+FinancialPhraseBank sentiment / FacebookAI/roberta-base / BitFit,finance_sentiment,FacebookAI/roberta-base,bitfit,5,3,0.59297520661157022,0.19765840220385669,0.33333333333333331,0.24816255944660609,0,0.2482 ± 0.0000,Yes,Aggregate consistent with constant-class collapse
+FinancialPhraseBank sentiment / FacebookAI/roberta-base / Adapter,finance_sentiment,FacebookAI/roberta-base,adapter,5,3,0.59297520661157022,0.19765840220385669,0.33333333333333331,0.24816255944660609,0,0.2482 ± 0.0000,Yes,Aggregate consistent with constant-class collapse
+TweetEval emotion / FacebookAI/roberta-base / BitFit,tweet_emotion,FacebookAI/roberta-base,bitfit,5,4,0.39268121041520049,0.098170302603800094,0.25,0.14098029307731169,0,0.1410 ± 0.0000,Yes,Aggregate consistent with constant-class collapse
+TweetEval emotion / vinai/bertweet-base / LoRA,tweet_emotion,vinai/bertweet-base,lora,5,4,0.39268121041520049,0.098170302603800094,0.25,0.14098029307731169,0,0.1410 ± 0.0000,Yes,Aggregate consistent with constant-class collapse

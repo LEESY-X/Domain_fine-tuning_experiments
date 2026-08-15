@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import inspect
+import hashlib
 import json
 import os
+import platform
 import random
 import shutil
 import tempfile
@@ -16,6 +18,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from datasets import Dataset, DatasetDict, load_dataset, load_from_disk
 from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
@@ -30,8 +33,23 @@ from transformers import (
     set_seed,
 )
 
+from src.result_analysis import (
+    prediction_diagnostics,
+    require_matching_run_signature,
+    summarize_run_frame,
+    validate_run_frame_integrity,
+    public_run_frame,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "config" / "experiment_config.json"
+_default_cache_root = ROOT / "cache"
+if "::" in str(_default_cache_root):
+    # fsspec interprets ``::`` in a local path as a chained protocol. This
+    # repository is sometimes checked out under a URL-shaped directory name.
+    cache_slug = hashlib.sha256(str(ROOT).encode("utf-8")).hexdigest()[:12]
+    _default_cache_root = Path(tempfile.gettempdir()) / f"domain_finetuning_cache_{cache_slug}"
+DATA_CACHE_ROOT = Path(os.environ.get("DOMAIN_FINETUNING_DATA_CACHE", _default_cache_root)).expanduser().resolve()
 METHODS = ("full_ft", "lora", "adapter", "ia3", "bitfit")
 
 
@@ -65,18 +83,25 @@ def load_config():
 
 
 def runtime_info():
+    mps_available = bool(
+        hasattr(torch.backends, "mps") and torch.backends.mps.is_available()
+    )
+    accelerator = "cuda" if torch.cuda.is_available() else "mps" if mps_available else "cpu"
     return {
         "time": now_iso(),
         "python": os.sys.version,
         "torch": torch.__version__,
         "cuda_runtime": torch.version.cuda,
         "cuda_available": torch.cuda.is_available(),
-        "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
+        "mps_available": mps_available,
+        "accelerator": accelerator,
+        "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "Apple MPS" if mps_available else "CPU",
         "gpu_memory_gb": round(torch.cuda.get_device_properties(0).total_memory / 1024**3, 3) if torch.cuda.is_available() else 0,
+        "machine": platform.machine(),
     }
 
 
-def precheck(require_cuda=True):
+def precheck(require_cuda=True, output_path=None):
     import datasets
     import peft
     import transformers
@@ -88,7 +113,7 @@ def precheck(require_cuda=True):
     }
     if require_cuda and not torch.cuda.is_available():
         raise RuntimeError("CUDA GPU가 감지되지 않았습니다. Python (ai_lab_first) 커널인지 확인하세요.")
-    atomic_json(ROOT / "results" / "environment.json", info)
+    atomic_json(Path(output_path) if output_path else ROOT / "results" / "environment.json", info)
     return info
 
 
@@ -225,7 +250,7 @@ def load_task(task_key, run_mode, limits=None):
         cache_tag = "paper_" + "_".join(f"{k}{int(v)}" for k, v in sorted(limits.items()))
     else:
         cache_tag = "paper_full"
-    cache = ROOT / "cache" / task_key / cache_tag
+    cache = DATA_CACHE_ROOT / task_key / cache_tag
     cache_complete = (cache / "dataset_dict.json").exists() and all(
         (cache / split / "state.json").exists() and (cache / split / "dataset_info.json").exists()
         for split in ("train", "validation", "test")
@@ -298,8 +323,15 @@ def _unfreeze_head(model):
             param.requires_grad = True
 
 
-def build_model(model_name, num_labels, method, cfg):
-    model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels, ignore_mismatched_sizes=True, attn_implementation="eager")
+def build_model(model_name, num_labels, method, cfg, revision=None):
+    pretrained_kwargs = {"revision": revision} if revision else {}
+    model = AutoModelForSequenceClassification.from_pretrained(
+        model_name,
+        num_labels=num_labels,
+        ignore_mismatched_sizes=True,
+        attn_implementation="eager",
+        **pretrained_kwargs,
+    )
     if method == "full_ft":
         return model
     if method == "bitfit":
@@ -367,24 +399,66 @@ class AtomicEpochCallback(TrainerCallback):
 
 
 def training_args(run_dir, method, seed, epochs, run_mode, cfg):
+    return _training_args(run_dir, method, seed, epochs, run_mode, cfg, overrides=None)
+
+
+def _training_args(run_dir, method, seed, epochs, run_mode, cfg, overrides=None):
+    overrides = overrides or {}
+    requested_precision = overrides.get("precision", cfg["precision"])
+    use_fp16 = requested_precision == "fp16" and torch.cuda.is_available()
     kwargs = dict(
         output_dir=str(run_dir / "checkpoints"),
-        learning_rate=cfg["learning_rates"][method],
+        learning_rate=overrides.get("learning_rate", cfg["learning_rates"][method]),
         per_device_train_batch_size=cfg["batch_size"],
         per_device_eval_batch_size=cfg["eval_batch_size"],
         gradient_accumulation_steps=cfg["gradient_accumulation_steps"],
-        num_train_epochs=1 if run_mode == "SMOKE" else epochs,
+        num_train_epochs=1 if run_mode == "SMOKE" else overrides.get("epochs", epochs),
         weight_decay=cfg["weight_decay"], warmup_ratio=cfg["warmup_ratio"],
         logging_strategy="steps", logging_steps=20,
         save_strategy="epoch", load_best_model_at_end=True,
         metric_for_best_model="macro_f1", greater_is_better=True,
         save_total_limit=1, report_to="none",
-        seed=seed, data_seed=42, fp16=cfg["precision"] == "fp16",
+        seed=seed, data_seed=42, fp16=use_fp16,
         dataloader_num_workers=cfg["dataloader_num_workers"],
+        optim=cfg.get("optimizer", "adamw_torch"),
+        lr_scheduler_type=cfg.get("lr_scheduler_type", "linear"),
     )
     signature = inspect.signature(TrainingArguments.__init__)
     kwargs["eval_strategy" if "eval_strategy" in signature.parameters else "evaluation_strategy"] = "epoch"
     return TrainingArguments(**kwargs)
+
+
+def _class_weights(labels, num_labels, strategy):
+    if strategy in (None, "none"):
+        return None
+    counts = np.bincount(np.asarray(labels, dtype=int), minlength=num_labels).astype(float)
+    if np.any(counts == 0):
+        raise ValueError(f"class weighting requires every class in train split; counts={counts.tolist()}")
+    if strategy == "inverse_frequency":
+        weights = counts.sum() / (num_labels * counts)
+    elif strategy == "inverse_sqrt_frequency":
+        weights = 1.0 / np.sqrt(counts)
+        weights /= weights.mean()
+    else:
+        raise ValueError(f"unknown class-weighting strategy: {strategy}")
+    return weights.astype(np.float32)
+
+
+class WeightedTrainer(Trainer):
+    def __init__(self, *args, class_weights, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.class_weights = torch.as_tensor(class_weights, dtype=torch.float32)
+
+    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+        labels = inputs.get("labels")
+        outputs = model(**inputs)
+        logits = outputs.get("logits") if isinstance(outputs, dict) else outputs.logits
+        loss = F.cross_entropy(
+            logits.reshape(-1, logits.shape[-1]),
+            labels.reshape(-1),
+            weight=self.class_weights.to(logits.device),
+        )
+        return (loss, outputs) if return_outputs else loss
 
 
 def _latest_checkpoint(run_dir):
@@ -396,32 +470,82 @@ def _latest_checkpoint(run_dir):
     return str(candidates[-1]) if candidates else None
 
 
-def run_one(study, task_key, model_name, method, seed, run_mode, epochs, limits=None):
+def run_one(
+    study,
+    task_key,
+    model_name,
+    method,
+    seed,
+    run_mode,
+    epochs,
+    limits=None,
+    *,
+    experiment_id=None,
+    variant=None,
+    training_overrides=None,
+    class_weighting="none",
+    keep_checkpoint=None,
+    force=False,
+):
     cfg = load_config()
     if method not in METHODS: raise ValueError(method)
     model_slug = model_name.replace("/", "__")
-    run_dir = ROOT / "results" / study / run_mode / task_key / model_slug / method / f"seed_{seed}"
+    if experiment_id:
+        run_dir = ROOT / "results" / "followup" / experiment_id / (variant or "default") / task_key / model_slug / method / f"seed_{seed}"
+    else:
+        run_dir = ROOT / "results" / study / run_mode / task_key / model_slug / method / f"seed_{seed}"
+    signature_payload = {
+        "study": study,
+        "task": task_key,
+        "model": model_name,
+        "method": method,
+        "seed": seed,
+        "run_mode": run_mode,
+        "epochs": epochs,
+        "limits": limits,
+        "experiment_id": experiment_id,
+        "variant": variant,
+        "training_overrides": training_overrides or {},
+        "class_weighting": class_weighting,
+        "keep_checkpoint": keep_checkpoint,
+        "protocol": cfg,
+        "suite_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    }
+    run_signature = hashlib.sha256(
+        json.dumps(signature_payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    ).hexdigest()
     metrics_path = run_dir / "final_metrics.json"
     if metrics_path.exists():
         try:
             existing = json.loads(metrics_path.read_text(encoding="utf-8"))
-            if existing.get("status") == "COMPLETE":
+            if existing.get("status") == "COMPLETE" and not force:
+                require_matching_run_signature(existing, run_signature, metrics_path)
                 return existing
         except (json.JSONDecodeError, OSError):
             pass
+    if force and run_dir.exists():
+        archived = run_dir.with_name(run_dir.name + ".superseded_" + datetime.now().strftime("%Y%m%d_%H%M%S"))
+        run_dir.rename(archived)
     run_dir.mkdir(parents=True, exist_ok=True)
     checkpoint_at_start = _latest_checkpoint(run_dir)
     previous_status = {}
     if (run_dir / "status.json").exists():
         try: previous_status = json.loads((run_dir / "status.json").read_text(encoding="utf-8"))
         except Exception: previous_status = {}
+    if checkpoint_at_start:
+        require_matching_run_signature(
+            previous_status,
+            run_signature,
+            run_dir / "status.json",
+        )
     status = {
         "status": "RUNNING", "started_at": previous_status.get("started_at", now_iso()),
         "resumed_at": now_iso() if checkpoint_at_start else None,
         "resume_count": int(previous_status.get("resume_count", 0)) + (1 if checkpoint_at_start else 0),
         "resumed_from_checkpoint": checkpoint_at_start,
         "study": study, "task": task_key, "model": model_name, "method": method,
-        "seed": seed, "run_mode": run_mode,
+        "seed": seed, "run_mode": run_mode, "experiment_id": experiment_id,
+        "variant": variant, "run_signature": run_signature,
     }
     atomic_json(run_dir / "status.json", status)
     append_event(run_dir / "events.jsonl", {"event": "RUN_STARTED", **status})
@@ -429,46 +553,73 @@ def run_one(study, task_key, model_name, method, seed, run_mode, epochs, limits=
         set_seed(seed)
         ds = load_task(task_key, run_mode, limits)
         spec = TASKS[task_key]
-        tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False if "bertweet" in model_name.lower() else True)
+        revision = cfg.get("model_revisions", {}).get(model_name)
+        pretrained_kwargs = {"revision": revision} if revision else {}
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            use_fast=False if "bertweet" in model_name.lower() else True,
+            **pretrained_kwargs,
+        )
         def tokenize(batch): return tokenizer(batch["text"], truncation=True, max_length=cfg["max_length"])
         tokenized = ds.map(tokenize, batched=True, remove_columns=["sample_id", "text"])
-        model = build_model(model_name, spec.num_labels, method, cfg)
+        model = build_model(model_name, spec.num_labels, method, cfg, revision=revision)
         counts = parameter_counts(model)
+        class_weights = _class_weights(ds["train"]["labels"], spec.num_labels, class_weighting)
         atomic_json(run_dir / "run_config.json", {
             **status, "epochs": epochs, "hyperparameters": cfg, "runtime": runtime_info(),
             "model_commit": getattr(model.config, "_commit_hash", None), **counts,
+            "training_overrides": training_overrides or {}, "class_weighting": class_weighting,
+            "class_weights": class_weights.tolist() if class_weights is not None else None,
+            "train_label_counts": np.bincount(np.asarray(ds["train"]["labels"]), minlength=spec.num_labels).astype(int).tolist(),
         })
         callback = AtomicEpochCallback(run_dir / "epoch_metrics.csv")
         trainer_kwargs = dict(
-            model=model, args=training_args(run_dir, method, seed, epochs, run_mode, cfg),
+            model=model, args=_training_args(run_dir, method, seed, epochs, run_mode, cfg, training_overrides),
             train_dataset=tokenized["train"], eval_dataset=tokenized["validation"],
             data_collator=DataCollatorWithPadding(tokenizer), compute_metrics=compute_metrics,
             callbacks=[EarlyStoppingCallback(early_stopping_patience=cfg["early_stopping_patience"]), callback],
         )
         if "processing_class" in inspect.signature(Trainer.__init__).parameters: trainer_kwargs["processing_class"] = tokenizer
         else: trainer_kwargs["tokenizer"] = tokenizer
-        trainer = Trainer(**trainer_kwargs)
+        trainer = WeightedTrainer(class_weights=class_weights, **trainer_kwargs) if class_weights is not None else Trainer(**trainer_kwargs)
+        trainer_device = str(trainer.args.device)
         checkpoint = _latest_checkpoint(run_dir)
         started = time.perf_counter()
         trainer.train(resume_from_checkpoint=checkpoint)
         train_seconds = time.perf_counter() - started
         test = trainer.predict(tokenized["test"], metric_key_prefix="test")
         predictions = np.argmax(test.predictions, axis=-1)
+        prediction_profile = prediction_diagnostics(test.label_ids, predictions, spec.num_labels)
         pd.DataFrame({"sample_id": ds["test"]["sample_id"], "label": test.label_ids, "prediction": predictions}).to_csv(run_dir / "predictions.csv", index=False, encoding="utf-8-sig")
         history = pd.DataFrame(trainer.state.log_history)
         history.to_csv(run_dir / "trainer_history.csv", index=False, encoding="utf-8-sig")
         result = {
             "status": "COMPLETE", "completed_at": now_iso(), "study": study, "task": task_key,
             "model": model_name, "method": method, "seed": seed, "run_mode": run_mode,
+            "experiment_id": experiment_id, "variant": variant, "run_signature": run_signature,
             "train_rows": len(ds["train"]), "validation_rows": len(ds["validation"]), "test_rows": len(ds["test"]),
-            "epochs_requested": 1 if run_mode == "SMOKE" else epochs, "learning_rate": cfg["learning_rates"][method],
+            "epochs_requested": 1 if run_mode == "SMOKE" else (training_overrides or {}).get("epochs", epochs),
+            "epochs_completed": float(trainer.state.epoch or 0.0),
+            "global_step": int(trainer.state.global_step),
+            "best_validation_macro_f1": float(trainer.state.best_metric) if trainer.state.best_metric is not None else None,
+            "learning_rate": (training_overrides or {}).get("learning_rate", cfg["learning_rates"][method]),
+            "class_weighting": class_weighting,
+            "trainer_device": trainer_device,
             "train_seconds": train_seconds, **counts, **test.metrics, "runtime": runtime_info(),
-            "best_checkpoint": trainer.state.best_model_checkpoint,
+            "best_checkpoint": (
+                Path(trainer.state.best_model_checkpoint).name
+                if trainer.state.best_model_checkpoint else None
+            ),
+            **prediction_profile,
         }
         atomic_json(metrics_path, result)
         atomic_json(run_dir / "status.json", result)
-        append_event(run_dir / "events.jsonl", {"event": "RUN_COMPLETE", "test_macro_f1": result.get("test_macro_f1")})
-        if not cfg["keep_best_checkpoint"]:
+        append_event(run_dir / "events.jsonl", {
+            "event": "RUN_COMPLETE", "test_macro_f1": result.get("test_macro_f1"),
+            "constant_prediction_collapse": result["constant_prediction_collapse"],
+        })
+        should_keep_checkpoint = cfg["keep_best_checkpoint"] if keep_checkpoint is None else keep_checkpoint
+        if not should_keep_checkpoint:
             shutil.rmtree(run_dir / "checkpoints", ignore_errors=True)
         del trainer, model
         if torch.cuda.is_available(): torch.cuda.empty_cache()
@@ -521,18 +672,75 @@ def run_study(study, run_mode="SMOKE", max_jobs=None, continue_on_error=None):
     return pd.DataFrame(results)
 
 
-def aggregate(run_mode="PAPER"):
+def aggregate(run_mode="PAPER", *, strict=True):
+    """Aggregate broad-benchmark runs after provenance and seed checks.
+
+    ``strict=False`` permits an intentionally partial progress export. Final
+    PAPER tables should always use the default strict validation.
+    """
+    if run_mode not in {"SMOKE", "PAPER"}:
+        raise ValueError("run_mode은 SMOKE 또는 PAPER만 가능합니다.")
+    cfg = load_config()
     rows = []
     for path in (ROOT / "results").glob(f"study*/{run_mode}/**/final_metrics.json"):
-        row = json.loads(path.read_text(encoding="utf-8")); row["source_file"] = str(path.relative_to(ROOT)); rows.append(row)
-    frame = pd.DataFrame(rows)
-    out = ROOT / "results" / "aggregate"; out.mkdir(parents=True, exist_ok=True)
-    frame.to_csv(out / f"all_runs_{run_mode.lower()}.csv", index=False, encoding="utf-8-sig")
-    if not frame.empty:
-        summary = frame.groupby(["study", "task", "model", "method"], as_index=False).agg(
-            runs=("seed", "count"), macro_f1_mean=("test_macro_f1", "mean"), macro_f1_std=("test_macro_f1", "std"),
-            accuracy_mean=("test_accuracy", "mean"), train_seconds_mean=("train_seconds", "mean"),
-            trainable_ratio_mean=("trainable_parameter_ratio", "mean"),
+        row = json.loads(path.read_text(encoding="utf-8"))
+        relative_parts = path.relative_to(ROOT / "results").parts
+        if len(relative_parts) != 7:
+            raise ValueError(f"unexpected result path layout: {path}")
+        path_study, path_mode, path_task, path_model, path_method, path_seed, _ = relative_parts
+        expected_path_identity = (
+            str(row.get("study")),
+            str(row.get("run_mode")),
+            str(row.get("task")),
+            str(row.get("model", "")).replace("/", "__"),
+            str(row.get("method")),
+            f"seed_{row.get('seed')}",
         )
-        summary.to_csv(out / f"summary_{run_mode.lower()}.csv", index=False, encoding="utf-8-sig")
+        if expected_path_identity != (
+            path_study,
+            path_mode,
+            path_task,
+            path_model,
+            path_method,
+            path_seed,
+        ):
+            raise ValueError(f"result payload/path identity mismatch: {path}")
+        row["source_file"] = str(path.relative_to(ROOT))
+        rows.append(row)
+    frame = pd.DataFrame(rows)
+    expected_keys = None
+    if strict:
+        expected_keys = {
+            (study, task, model, method, int(seed))
+            for study in ("study1", "study2", "study3")
+            for task in cfg[study]["tasks"]
+            for model in cfg[study]["models"]
+            for method in cfg["methods"]
+            for seed in cfg["seeds"]
+        }
+    validate_run_frame_integrity(
+        frame,
+        expected_seeds=cfg["seeds"] if strict else None,
+        expected_run_mode=run_mode,
+        expected_keys=expected_keys,
+    )
+    summary = summarize_run_frame(
+        frame,
+        expected_seeds=cfg["seeds"] if strict else None,
+    )
+    if strict and not bool(summary["seed_coverage_ok"].all()):
+        raise ValueError("aggregate contains a group with invalid seed coverage")
+    out = ROOT / "results" / "aggregate"; out.mkdir(parents=True, exist_ok=True)
+    public_run_frame(frame).to_csv(
+        out / f"all_runs_{run_mode.lower()}.csv",
+        index=False,
+        encoding="utf-8-sig",
+        float_format="%.17g",
+    )
+    summary.to_csv(
+        out / f"summary_{run_mode.lower()}.csv",
+        index=False,
+        encoding="utf-8-sig",
+        float_format="%.17g",
+    )
     return frame

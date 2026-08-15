@@ -1,0 +1,51 @@
+% Requires \usepackage{booktabs}
+% Values are Macro-F1 mean $\pm$ sample SD across seeds 42, 52, 62, 72, 82.
+\begin{table*}[t]
+\centering\small
+\caption{Original exact-zero standard-deviation rows and collapse diagnosis.}
+\label{tab:zero-sd-diagnosis}
+\begin{tabular}{lcc}
+\toprule
+Condition & Macro-F1 & Constant-class fingerprint \\
+\midrule
+FinancialPhraseBank sentiment / FacebookAI/roberta-base / BitFit & $0.2482 \pm 0.0000$ & Yes \\
+FinancialPhraseBank sentiment / FacebookAI/roberta-base / Adapter & $0.2482 \pm 0.0000$ & Yes \\
+TweetEval emotion / FacebookAI/roberta-base / BitFit & $0.1410 \pm 0.0000$ & Yes \\
+TweetEval emotion / vinai/bertweet-base / LoRA & $0.1410 \pm 0.0000$ & Yes \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table}[t]
+\centering\small
+\caption{Pilot ablation for RoBERTa Adapter on FinancialPhraseBank (1,024 training examples).}
+\label{tab:pilot-ablation}
+\begin{tabular}{lccc}
+\toprule
+Variant & Macro-F1 & Collapse & Full coverage \\
+\midrule
+Baseline (2 ep.) & $0.2482 \pm 0.0000$ & 5/5 & 0/5 \\
+Longer (max 5 ep.) & $0.2482 \pm 0.0000$ & 5/5 & 0/5 \\
+Weighted (2 ep.) & $0.2482 \pm 0.0000$ & 5/5 & 0/5 \\
+Longer + weighted (max 5 ep.) & $0.2482 \pm 0.0000$ & 5/5 & 0/5 \\
+Higher LR (2 ep.) & $0.2482 \pm 0.0000$ & 5/5 & 0/5 \\
+Higher LR + weighted (max 5 ep.) & $0.8040 \pm 0.0063$ & 0/5 & 5/5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[t]
+\centering\small
+\caption{Full-data paired follow-up. Remedy combines up to five epochs with early stopping, a higher method-specific learning rate, and inverse-square-root class weighting.}
+\label{tab:full-collapse-followup}
+\begin{tabular}{lccrcc}
+\toprule
+Condition & Baseline & Remedy & $\Delta$F1 & Base collapse & Remedy collapse \\
+\midrule
+FinancialPhraseBank sentiment / FacebookAI/roberta-base / Adapter & $0.2759 \pm 0.0338$ & $0.8486 \pm 0.0087$ & +0.5727 & 2/5 & 0/5 \\
+FinancialPhraseBank sentiment / FacebookAI/roberta-base / BitFit & $0.2482 \pm 0.0000$ & $0.8348 \pm 0.0085$ & +0.5866 & 5/5 & 0/5 \\
+TweetEval emotion / FacebookAI/roberta-base / BitFit & $0.1410 \pm 0.0000$ & $0.7646 \pm 0.0056$ & +0.6236 & 5/5 & 0/5 \\
+TweetEval emotion / vinai/bertweet-base / LoRA & $0.1410 \pm 0.0000$ & $0.7840 \pm 0.0037$ & +0.6430 & 5/5 & 0/5 \\
+\bottomrule
+\end{tabular}
+\end{table*}

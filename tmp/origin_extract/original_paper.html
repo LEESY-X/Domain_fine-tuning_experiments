@@ -1,0 +1,1530 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>KSCI Review Manuscript</title>
+  <meta name="Author" content="Anonymous">
+  <meta name="LastAuthor" content="leesu">
+  <meta name="Subject" content="Parameter-efficient fine-tuning for text classification">
+  <meta name="Description" content="Submission manuscript evaluating Full FT, LoRA, Adapter, IA3, and BitFit across 13 tasks and 550 runs.">
+  <meta name="Keywords" content="PEFT, Full fine-tuning, LoRA, Adapter, IA3, BitFit, text classification">
+  <meta name="ModificationTime" content="0000-00-00T00:00:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.6">
+  <style type="text/css">
+    p.p1 {margin: 20.0px 0.0px 10.0px 0.0px; text-align: center; font: 14.0px Times; color: #111111}
+    p.p2 {margin: 10.0px 0.0px 0.0px 0.0px; text-align: center; font: 14.0px Times; color: #111111; min-height: 18.0px}
+    p.p3 {margin: 20.0px 0.0px 5.0px 0.0px; text-align: center; font: 11.0px Times; color: #111111}
+    p.p4 {margin: 0.0px 30.0px 0.0px 30.0px; text-align: justify; font: 9.0px Times; color: #111111}
+    p.p5 {margin: 5.0px 20.0px 0.0px 30.0px; text-align: justify; font: 10.0px Times; color: #111111}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Times; color: #111111; min-height: 13.0px}
+    p.p7 {margin: 20.0px 0.0px 10.0px 0.0px; text-align: center; font: 12.0px Times; color: #111111}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px Times}
+    p.p9 {margin: 20.0px 0.0px 10.0px 0.0px; text-align: justify; font: 10.0px Times; color: #111111}
+    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p11 {margin: 0.0px 0.0px 3.0px 0.0px; font: 9.0px Times; color: #111111}
+    p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px Times; color: #111111}
+    p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 7.0px Times}
+    p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 7.0px Times; color: #111111}
+    p.p15 {margin: 0.0px 0.0px 4.0px 0.0px; font: 7.0px Times; color: #111111; min-height: 8.0px}
+    p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px Times; color: #111111; min-height: 8.0px}
+    p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Times; color: #111111}
+    p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 9.0px Times; color: #111111}
+    p.p19 {margin: 0.0px 0.0px 4.0px 0.0px; font: 9.0px Times; color: #111111; min-height: 11.0px}
+    p.p20 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Times; color: #111111; min-height: 11.0px}
+    p.p21 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times}
+    p.p22 {margin: 0.0px 0.0px 2.0px 0.0px; text-align: center; font: 12.0px Times; min-height: 14.0px}
+    p.p23 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px Times; color: #111111}
+    p.p24 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 8.0px Times; color: #111111}
+    p.p25 {margin: 0.0px 0.0px 4.0px 0.0px; font: 8.0px Times; color: #111111; min-height: 10.0px}
+    p.p26 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px Times; color: #111111; min-height: 10.0px}
+    p.p27 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px Times; min-height: 8.0px}
+    p.p28 {margin: 3.0px 0.0px 3.0px 0.0px; font: 7.5px Times}
+    p.p29 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.5px Times; min-height: 10.0px}
+    p.p30 {margin: 20.0px 0.0px 10.0px 0.0px; text-align: justify; font: 12.0px Times}
+    p.p31 {margin: 0.0px 0.0px 3.0px 0.0px; font: 12.0px Times}
+    p.p32 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 8.0px Times}
+    p.p33 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px 'Courier New'; color: #111111}
+    p.p34 {margin: 8.0px 0.0px 4.0px 0.0px; text-align: center; font: 12.0px Times; color: #111111}
+    p.p35 {margin: 0.0px 0.0px 0.0px 10.0px; text-align: justify; font: 9.0px Times; color: #111111}
+    li.li8 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px Times}
+    span.s1 {letter-spacing: -0.5px}
+    span.s2 {font: 12.0px Times; color: #000000}
+    span.s3 {font: 10.0px Times; letter-spacing: -0.5px; color: #111111}
+    span.s4 {font: 10.0px Times; color: #111111}
+    span.s5 {font: 10.0px 'Courier New'; letter-spacing: -0.5px; color: #111111}
+    table.t1 {border-collapse: collapse}
+    td.td1 {border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    ul.ul1 {list-style-type: disc}
+  </style>
+</head>
+<body>
+<p class="p1"><b>A Multi-Criteria Evaluation of Fine-Tuning Strategies for Text Classification: Divergence among Performance, Training Time, Parameter Efficiency, and Seed Sensitivity across 13 English and Korean Tasks and 550 Repeated Runs</b></p>
+<p class="p1"><b>(영어·한국어 텍스트 분류에서 파인튜닝 방식의 다기준 비교 평가)</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>[Abstract]</b></p>
+<p class="p4"><span class="s1">Parameter-efficient fine-tuning reduces trainable parameters, but parameter ratio, training time, predictive performance, and seed variation need not induce the same ordering. We analyze Full Fine-tuning (Full FT), LoRA, Adapter, IA3, and BitFit across 13 English and Korean text-classification tasks and 22 task/model conditions, with five seeds per condition and 550 completed runs. Macro-F1 is the primary outcome; training-only wall-clock time, trainable-parameter ratio, and across-seed Macro-F1 standard deviation are treated as separate axes. To account for repeated models within the same task, primary inference uses 13 unique tasks as blocks. Full FT achieved the highest Macro-F1 in 19 of 22 conditions, and a task-level Friedman test indicated a method effect, χ²(4)=24.80, p&lt;.001, Kendall’s W=.477. In contrast, BitFit was fastest in all conditions, whereas IA3 used the smallest trainable-parameter ratio. IA3 and Adapter also produced local exceptions that exceeded Full FT. These results show that trainable-parameter count alone cannot stand in for performance, speed, or observed seed dispersion; a Full FT baseline and the actual resource constraint should be evaluated separately. The absence of seed-level predictions and the training-only timing boundary limit stronger claims.</span><span class="s2"> An exploratory stratification by language session found that Adapter remained within 0.02 of Full FT on all three Korean tasks, whereas English-session mean PEFT losses were strongly influenced by a few collapse-like conditions. Because language was confounded with task, base model, data scale, and epoch budget, this contrast was treated as descriptive rather than as a language effect.</span></p>
+<p class="p5"><b>▸Key words: </b>Parameter-Efficient Fine-Tuning, Text Classification, Macro-F1, Training Efficiency, Seed Sensitivity</p>
+<p class="p3"><b>[요 약]</b></p>
+<p class="p4"><span class="s1">PEFT는 학습 가능 파라미터를 줄이지만 성능, 학습시간, 파라미터 비율, 시드 변동성이 같은 순위를 보인다고 볼 수 없다. 본 연구는 Full Fine-tuning(Full FT), LoRA, Adapter, IA3, BitFit을 영어·한국어 텍스트 분류 13개 과제와 22개 과제/모델 조건에서 조건당 5개 시드로 비교한 550회 실행 결과를 다기준으로 분석하였다. 주 지표는 Macro-F1이며, 동일 과제의 모델 반복을 평균해 13개 과제를 통계 블록으로 사용하였다. Full FT는 22개 조건 중 19개에서 최고 성능을 보였고, Friedman 검정에서도 방법 효과가 확인되었다(χ²(4)=24.80, p&lt;.001, Kendall’s W=.477). 반면 BitFit은 모든 조건에서 학습시간이 가장 짧았고 IA3는 학습 가능 파라미터 비율이 가장 작았다. IA3와 Adapter가 Full FT를 앞선 국소 예외도 관찰되었다. 결과는 학습 가능 파라미터 수만으로 성능·속도·관측된 시드 산포를 대표할 수 없으며, Full FT 기준선과 실제 자원 제약을 분리해 검증해야 함을 보여준다. 시드별 예측 부재와 학습 구간에 한정된 시간 측정은 해석의 한계이다.</span><span class="s2"> 언어 세션별 탐색 분석에서 Adapter는 한국어 3개 과제 모두 Full FT 대비 0.02 허용폭 이내였고, 영어 세션의 PEFT 평균 손실은 일부 붕괴 가능 조건의 영향을 크게 받았다. 그러나 언어가 과제·기반 모델·데이터 규모·epoch와 교락되어 있어 이 차이는 언어 효과가 아닌 기술적 관찰로 해석하였다.</span></p>
+<p class="p5"><b>▸주제어: </b>파라미터 효율적 파인튜닝, 텍스트 분류, Macro-F1, 학습 효율, 시드 민감도</p>
+<p class="p6"><br></p>
+<p class="p7"><b>I. Introduction</b></p>
+<p class="p8">Transformer 기반 사전학습 언어모델은 새로운 분류 과제에서 전체 파라미터를 갱신하는 Full Fine-tuning을 통해 높은 성능을 얻는다[1]. 그러나 모델과 과제의 수가 늘어나면 과제마다 전체 모델 사본을 저장하고 모든 가중치를 갱신하는 비용이 커진다. 이를 줄이기 위해 Adapter[2], LoRA[3], IA3[4], BitFit[5]과 같은 Parameter-Efficient Fine-Tuning(PEFT) 방법이 제안되었다. 이들은 일부 파라미터만 학습하거나 작은 모듈을 추가함으로써 학습 가능 파라미터와 저장 비용을 줄이지만, 파라미터 수의 감소가 실제 학습시간 단축이나 과제 전반의 성능 보존을 자동으로 보장하지는 않는다[6-8].</p>
+<p class="p8">실제 방법 선택의 핵심은 “어떤 방법이 가장 적은 파라미터를 학습하는가”가 아니라 “주어진 자원 제약에서 어느 정도의 성능 손실과 실패 위험을 감수할 것인가”이다. 학습 가능 파라미터 비율, 학습시간, 예측 성능, 시드 변동성은 하나의 효율성을 대신 표현하는 지표가 아니다. 한 축의 우위가 다른 축의 우위를 보장하지 않는데도 이를 단일 효율 개념으로 묶으면, 학습 가능 파라미터가 적지만 실제 학습은 느린 방법이나 모든 시드에서 유사하게 낮은 성능을 내는 조건을 각각 효율적이거나 안정적인 것으로 오인할 수 있다.</p>
+<p class="p8">기존 문헌의 핵심 공백은 PEFT 연구 자체의 부족보다 실제 방법 선택에 필요한 비교 증거가 하나의 설계 안에서 정렬되어 있지 않다는 데 있다. 첫째, 제한된 과제·언어·모델을 대상으로 한 결과만으로는 과제 변화에 따른 순위 변동을 판단하기 어렵다. 둘째, 성능, 학습 가능 파라미터 비율, 학습시간이 모두 “효율”로 묶여 각 축의 상충관계가 충분히 드러나지 않는다[6-8]. 국내 KCI 연구에서도 Full FT와 LoRA, Adapter, Prompt Tuning 등을 비교한 사례가 축적되고 있으나[9-12], IA3와 BitFit을 포함해 영어·한국어 다중 도메인 과제에서 성능·시간·파라미터·시드 민감도와 실패 양상을 동시에 분석한 근거는 제한적이다. 셋째, 동일 과제에서 파생된 여러 과제/모델 조건을 독립 표본처럼 해석하면 근거의 양을 과대평가할 수 있으며, 다중 과제 비교에서는 분석 단위와 자료 의존성을 구분해야 한다[13]. 넷째, 낮은 시드 간 표준편차가 낮은 평균 성능과 함께 나타나는 경우에도 이를 안정성으로만 해석하면 예측 붕괴 가능성을 놓칠 수 있다.</p>
+<p class="p8">본 연구는 새로운 PEFT 구조를 제안하는 대신, 3개 기반 모델, 13개 고유 텍스트 분류 과제, 22개 과제/모델 조건에서 Full FT와 네 PEFT 방법을 각각 5개 시드로 실행한 550회 결과를 다기준으로 재분석한다. 동일한 Study 2 과제가 RoBERTa와 BERTweet에서 반복된 종속 구조를 고려하여 방법 간 전역 추론에서는 두 모델 조건을 과제 안에서 평균한 13개 고유 과제를 분석 블록으로 사용하고, 22개 조건은 관측 승자·국소 예외·실패 가능성을 설명하는 기술 단위로 사용한다. 본 논문의 학술적 의의는 방법별 평균 순위를 하나 더 추가하는 데 있지 않고, 서로 다른 효율 축과 자료의 의존 구조를 분리하여 새 과제에서도 재사용할 수 있는 판정 절차를 제시하는 데 있다.</p>
+<p class="p8"><span class="s3"><b>핵심 주장.</b></span> 본 연구가 검증하려는 중심 명제는 학습 가능 파라미터 수가 성능·학습시간·시드 간 변동성을 대표하는 충분한 대리변수가 아니라는 것이다. 따라서 보편적 단일 승자를 찾기보다 Full FT를 성능 기준선으로 두고, 허용 가능한 성능 손실 안에서 실제 제약과 직접 연결된 시간 또는 파라미터 축을 별도로 최적화해야 한다.</p>
+<p class="p8">연구 질문은 다음과 같다.</p>
+<ul class="ul1">
+  <li class="li8"><span class="s4"><b></b></span><span class="s3"><b>RQ1:</b></span> 다섯 방법의 Macro-F1 순위는 13개 고유 과제에서 차이가 있는가?</li>
+  <li class="li8"><span class="s4"><b></b></span><span class="s3"><b>RQ2:</b></span> Full FT 대비 각 PEFT 방법의 과제 수준 성능 차이와 효과크기는 얼마인가?</li>
+  <li class="li8"><span class="s4"><b></b></span><span class="s3"><b>RQ3:</b></span> 학습 벽시계 시간과 학습 가능 파라미터 비율의 순위는 성능 순위와 어떻게 다른가?</li>
+  <li class="li8"><span class="s4"><b></b></span><span class="s3"><b>RQ4:</b></span> 전역 경향과 다른 국소적 우위 및 낮은 시드 변동성과 성능 붕괴가 공존하는 조건은 무엇인가?</li>
+</ul>
+<p class="p8">본 연구의 기여는 다음과 같다. 첫째, 동일 프레임워크에서 Full FT, LoRA, Adapter, IA3, BitFit을 영어·한국어 다중 도메인 13개 과제에 걸쳐 비교하고 전역 경향과 국소 예외를 함께 제시한다. 둘째, 550회 반복 실험의 집계 결과를 이용하되 22개 과제/모델 조건을 독립 데이터셋처럼 취급하지 않는 13개 고유 과제 단위 비모수 분석을 수행한다. 셋째, 성능, 학습시간, 학습 가능 파라미터, 시드 민감도를 서로 다른 축으로 분리하고 임의 가중 종합점수 대신 조건별 판정 규칙을 도출한다. 넷째, 낮은 시드 분산과 저성능의 공존을 별도의 실패 신호로 다룬다. 다섯째, 코드와 집계 결과를 특정 공개 커밋에 연결하고 분석 산출물과 제한을 함께 공개하여 결과의 추적 가능성을 높인다.</p>
+<p class="p8"><span class="s3"><b>주장 범위.</b></span> 본 연구의 분석 대상은 방법 자체의 보편적 우열이 아니라 고정된 구현·튜닝 정책 아래 관찰된 조건부 성과이다. 따라서 관찰된 차이를 알고리즘 구조의 인과적 효과로 단정하지 않으며, 직접 측정하지 않은 peak VRAM, 에너지, 체크포인트 크기, 전체 파이프라인 시간과 추론 지연으로 결론을 확장하지 않는다. 또한 낮은 시드 표준편차만으로 강건성이나 예측 붕괴를 확정하지 않는다.</p>
+<p class="p7"><b>II. Related Work</b></p>
+<p class="p9"><b>1. 파라미터 효율적 파인튜닝</b></p>
+<p class="p8">Houlsby Adapter는 각 Transformer layer의 attention 및 feed-forward sublayer 뒤에 작은 병목 모듈을 삽입하고 기반 모델을 동결한다[2]. 입력 은닉표현을 , down/up projection을 , 비선형함수를 라 하면 기본 형태는 로 나타낼 수 있다. LoRA는 원래 가중치 를 동결하고 저랭크 행렬 와 의 곱으로 를 학습한다[3]. IA3는 attention의 key/value와 feed-forward 활성에 학습 가능한 스케일 벡터를 곱해 더 적은 파라미터로 적응한다[4]. BitFit은 주로 bias와 분류 헤드만 갱신한다[5]. 이 방법들은 모두 학습 가능 파라미터를 줄이지만, 계산 그래프와 커널 실행이 서로 달라 파라미터 비율과 실제 속도는 일치하지 않을 수 있다[7,8].</p>
+<p class="p8">PEFT 방법을 통합 관점에서 분석한 연구는 서로 다른 방법이 추가 모듈의 위치와 형태를 달리할 뿐 공통 구조로 설명될 수 있음을 보였다[6]. 한편 체계적 비교에서는 특정 데이터·모델·하이퍼파라미터에서 얻은 우위를 보편적 순위로 확대하기 어렵고, 공정한 비교를 위해 방법별 튜닝과 복수 과제가 필요하다고 지적한다[7,8]. 본 연구는 방법별 학습률을 포함한 하나의 실무적 실험 정책을 비교하므로, 결과를 “알고리즘 자체의 순수 효과”가 아니라 “고정된 구현·튜닝 정책 아래의 방법 성과”로 해석한다.</p>
+<p class="p9"><b>2. 국내 PEFT 비교 연구와 본 연구의 위치</b></p>
+<p class="p8">김대건과 김남규는 정보통신·의료 문서에서 데이터 이질성 기반 커리큘럼 학습이 Full FT와 LoRA의 분류 성능을 향상시킬 수 있음을 보고하였다[9]. 모윤호와 강상우는 목적 지향 대화에서 Adapter와 LoRA를 결합한 학습 방법을 제시해 적은 학습 파라미터로 Full FT에 근접한 성능을 관찰하였다[10]. 박진감과 김도국은 금융 감성분석에서 Mamba 기반 Adapter가 Full FT와 다른 PEFT보다 높은 성능을 낼 수 있음을 보였으며[11], 홍유석과 김진은 세 GLUE 과제에서 Full FT, LoRA, Prompt Tuning, Selective Layer Fine-tuning을 비교하였다[12].</p>
+<p class="p8">이러한 연구는 PEFT의 국내 응용 가능성을 보여주지만 과제, 방법 또는 언어 범위가 서로 다르다. 본 연구는 새로운 PEFT 구조를 제안하는 대신, 다섯 대표 방법을 동일 코드 경로에서 비교하고 과제 수준 통계와 실패 양상을 함께 제시하는 평가 연구에 초점을 둔다. 신규성은 “Full FT와 LoRA의 비교” 자체가 아니라, (1) IA3와 BitFit을 포함한 다섯 방법, (2) 영어·한국어와 다중 도메인, (3) 조건당 5개 시드, (4) 성능·시간·파라미터·시드 민감도의 분리, (5) 13개 고유 과제 단위 비모수 분석의 결합에 있다.</p>
+<p class="p9"><b>3. 다중 과제 비교와 반복 실험</b></p>
+<p class="p8">여러 데이터셋 비교에는 Wilcoxon signed-rank 검정과 Friedman 검정 등 비모수 절차가 권고된다[13,14]. 본 연구는 Friedman 전역 검정 후, 연구질문에 따라 Full FT를 기준으로 한 네 쌍대 비교에 Wilcoxon signed-rank 검정을 적용한다. 다중 사후비교에서는 가족단위 제1종 오류를 제어해야 하며, 본 연구는 Holm의 순차 보정을 사용한다[15]. NLP 실험에서는 자료의 의존 구조와 비교 목적에 맞는 검정을 선택하고 해석 범위를 명시해야 한다[16]. 본 연구는 통계적 유의성만으로 실질적 차이를 설명하지 않기 위해 Kendall’s W, rank-biserial correlation, Hodges–Lehmann 위치 추정치와 과제 재표집 신뢰구간을 함께 보고한다. 또한 파인튜닝 결과가 가중치 초기화와 데이터 순서에 민감하다는 지적[17]과 계산 예산·실험 세부사항을 함께 보고해야 한다는 권고[18,19]를 반영하여 조건당 5개 학습 시드를 사용하고 하드웨어·시간 경계·공개 범위를 명시한다. 다만 공개 패키지에는 시드별 행과 예측이 없으므로 본 논문의 재분석은 집계 평균·표준편차와 과제 수준 차이에 한정한다.</p>
+<p class="p7"><b>III. Research Method</b></p>
+<p class="p9"><b>1. 실험 설계와 데이터</b></p>
+<p class="p8">실험은 세 Study로 구성된다. Study 1은 BERTweet와 영어 혐오표현 과제 1개, Study 2는 RoBERTa와 BERTweet를 영어 과제 9개에 각각 적용한 18개 조건, Study 3은 KLUE-RoBERTa와 한국어 과제 3개로 구성된다. 총 13개 고유 과제, 22개 과제/모델 조건이다. 각 조건에서 다섯 방법을 시드 42, 52, 62, 72, 82로 반복해 회 실행했다.</p>
+<p class="p10"><br></p>
+<p class="p11">Table 1. Dataset and study composition</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Study</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Task key</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Source</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Classes</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Train / Valid. / Test</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Base model</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Epochs</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>1</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>measuring_hate_<br>
+speech</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>Measuring Hate Speech[20]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>108,444 / 13,556 / 13,556</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>3</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>finance_sentiment</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>Financial PhraseBank[21]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>3,872 / 484 / 484</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>movie_reviews</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>IMDb[22]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>22,500 / 2,500 / 25,000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>news_topic</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>AG News[23]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>4</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>108,000 / 12,000 / 7,600</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>product_reviews</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>Amazon Reviews Multi (en)[24]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>5</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>200,000 / 5,000 / 5,000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>tweet_emotion</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>TweetEval Emotion[25]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>4</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>3,257 / 374 / 1,421</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>tweet_hate</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>TweetEval Hate[25]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>9,000 / 1,000 / 2,970</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>tweet_irony</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>TweetEval Irony[25]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2,862 / 955 / 784</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>tweet_offensive</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>TweetEval Offensive[25]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>11,916 / 1,324 / 860</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>tweet_sentiment</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>TweetEval Sentiment[25]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>45,615 / 2,000 / 12,284</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>RoBERTa, BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>comment_kmhas_<br>
+binary</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>K-MHaS, binary conversion[26]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>78,977 / 8,776 / 21,939</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>KLUE-RoBERTa</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>5</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>movie_nsmc</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>NSMC[27]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>134,995 / 15,000 / 49,997</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>KLUE-RoBERTa</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>5</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>news_ynat</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>KLUE YNAT[28]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>7</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>41,110 / 4,568 / 9,107</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>KLUE-RoBERTa</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>5</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p15"><b></b><br></p>
+<p class="p16"><b></b><br></p>
+<p class="p8">Table 1의 표본 수는 고유 과제 기준으로 훈련 770,548개, 검증 67,537개, 시험 151,002개이다. Study 2에서 같은 데이터 분할을 두 기반 모델이 공유하므로 이를 두 개의 독립 데이터셋으로 세지 않았다. 원 데이터가 train/validation/test를 모두 제공하면 이를 유지하고, validation이 없으면 train에서 층화 분할을 생성했다. 단일 source split만 있는 <span class="s5">measuring_hate_speech</span>는 80/10/10으로 나누었다. 층화가 불가능할 때만 비층화 분할로 대체하도록 구현되었다. 모든 분할은 <span class="s5">data_seed=42</span>로 고정되어 학습 시드가 달라도 시험 표본은 동일하다. K-MHaS는 원 레이블 목록이 숫자 8 하나로만 구성되면 비혐오(0), 그 외이면 혐오(1)로 이진화했으며, Measuring Hate Speech는 원 점수가 1.0 이상이면 양성으로 변환했다. 이 조작적 정의는 원 다중 레이블·연속 개념을 단순화하므로 결과는 해당 이진화에 한정된다.</p>
+<p class="p9"><b>2. 기반 모델과 파인튜닝 방법</b></p>
+<p class="p8">기반 모델은 <span class="s5">vinai/bertweet-base</span>[29], <span class="s5">FacebookAI/roberta-base</span>[30], <span class="s5">klue/roberta-base</span>[28]이다. BERTweet는 트윗 도메인 영어 모델, RoBERTa는 일반 영어 모델, KLUE-RoBERTa는 한국어 모델이다. Full FT는 모든 파라미터를 갱신한다. LoRA는 각 attention의 query와 value에 rank 8, alpha 16, dropout 0.05를 적용하고 분류 헤드를 저장·학습한다. Adapter는 각 encoder layer output에 bottleneck 64, GELU, dropout 0.0인 잔차 모듈을 한 번 삽입하고 분류 헤드를 학습한다. 이는 Houlsby 원형의 layer 내 두 지점 삽입이 아니라 공개 저장소가 구현한 단일 layer-output 변형이다[31]. IA3는 key, value, <span class="s5">intermediate.dense</span>에 스케일 벡터를 두고 분류 헤드를 학습한다. BitFit은 bias와 분류 헤드만 학습한다.</p>
+<p class="p10"><br></p>
+<p class="p11">Table 2. Common training configuration</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Item</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Value</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Maximum sequence length</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>128</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Train / evaluation batch size</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>16 / 32</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Gradient accumulation</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>4 (effective train batch 64)</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Precision</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>FP16</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Weight decay / warmup ratio</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>0.01 / 0.06</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Early stopping</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>patience 2; validation Macro-F1</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Learning rates</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>Full FT 2e−5; LoRA 1e−4; Adapter 1e−4; IA3 5e−4; BitFit 1e−4</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Training seeds</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>42, 52, 62, 72, 82</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Data split seed</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>42</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Data loader workers</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p17"><b>Checkpoint selection</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p18"><b>best validation Macro-F1</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p19"><b></b><br></p>
+<p class="p20"><b></b><br></p>
+<p class="p8">모든 입력은 최대 128 token에서 절단하고 동적 padding을 사용했다. <span class="s5">TrainingArguments</span>의 optimizer와 scheduler를 코드에서 별도로 덮어쓰지 않았으므로, 설치된 Transformers 5.9.0의 기본값에 의존한다. 이는 버전 간 재현성 위험이므로 버전과 커밋을 함께 고정했다. 방법마다 학습률이 다르기 때문에 비교 결과는 동일 학습률 통제 실험이 아니라, 사전에 정의한 방법별 실무 설정의 결합 효과이다.</p>
+<p class="p8">실험은 NVIDIA GeForce RTX 5070 Ti 15.92 GB, CUDA 12.8, PyTorch 2.11.0.dev20260119+cu128, Transformers 5.9.0, PEFT 0.19.1 환경에서 수행되었다. 따라서 절대 시간은 해당 하드웨어·소프트웨어 스택의 측정치이며 다른 장치의 실행시간을 예측하지 않는다.</p>
+<p class="p9"><b>3. 측정 지표</b></p>
+<p class="p8">주 성능 지표는 클래스별 F1을 동일 가중 평균한 Macro-F1이다[32]. 불균형이 있는 다중·이진 분류 과제를 함께 비교하므로 정확도보다 Macro-F1을 우선했다. 각 과제/모델/방법 조건에서 5개 시드의 시험 Macro-F1 평균과 표준편차를 계산했다. 정확도, Macro-precision, Macro-recall도 산출했으나 본문의 주 추론은 분석의 주 지표로 고정한 Macro-F1에 한정했다.</p>
+<p class="p8">학습시간은 Python <span class="s5">time.perf_counter()</span>로 <span class="s5">trainer.train()</span> 호출 직전부터 반환 직후까지 측정한 벽시계 초이다. 데이터 다운로드·표준화·tokenization, tokenizer와 모델 로딩, 시험 예측은 제외된다. 따라서 본문의 “속도”는 전체 파이프라인 비용이나 추론 지연이 아니라 학습 호출 구간의 상대 시간이다. 학습 가능 파라미터 비율은 학습 가능한 파라미터 수를 전체 파라미터 수로 나눈 값이다. peak VRAM, 에너지, 저장 용량, 추론 latency는 측정하지 않았으므로 효율 우위로 주장하지 않는다.</p>
+<p class="p8">시드 민감도는 조건 내 5개 Macro-F1의 표준편차로 기술한다. 표준편차가 작더라도 평균 성능이 무작위·상수 예측 수준에 가까울 수 있으므로, 낮은 표준편차를 강건성의 충분조건으로 보지 않는다. 공개 저장소에는 시드별 예측과 run-level 표가 포함되지 않아 붕괴 여부를 클래스별 예측 분포로 사후 검증할 수 없다.</p>
+<p class="p9"><b>4. 통계 분석</b></p>
+<p class="p8">주 분석 단위는 13개 고유 과제이다. Study 2의 각 과제는 두 모델의 조건을 과제 안에서 동일 가중 평균하여 하나의 과제·방법 점수로 만들었다. Study 1과 3은 각 과제에 하나의 기반 모델만 있으므로 그대로 사용했다. 이 절차는 22개 과제/모델 조건을 22개 독립 표본으로 오인하는 문제를 피하지만, 모델별 이질성을 하나의 평균으로 축약한다.</p>
+<p class="p8">각 지표에서 13개 과제를 블록, 5개 방법을 처리로 한 Friedman 검정을 실시했다. 평균 순위는 성능에서는 높은 값, 시간·파라미터 비율·시드 표준편차에서는 낮은 값이 우수하도록 계산했다. 효과크기는 인 Kendall’s W로 보고하고 Iman–Davenport F 근사도 함께 제시했다[13,14]. RQ2는 각 PEFT와 Full FT의 13개 과제 차이에 대해 양측 Wilcoxon signed-rank 검정을 수행하고 네 비교의 p 값을 Holm 방식으로 보정했다[15]. 평균·중앙값 차이, Hodges–Lehmann 추정치, rank-biserial correlation, 승/무/패 과제 수를 함께 보고했다. 95% 신뢰구간은 고정 시드 20,260,718로 13개 과제를 50,000회 복원 재표집한 평균 차이의 percentile 구간이다. 과제 수가 13개이고 도메인 구성이 불균형하므로 이 구간은 모집단 전체로의 강한 일반화를 뜻하지 않는다.</p>
+<p class="p8">22개 조건에서는 관측 승자와 3차원 Pareto 비지배 여부를 보조적으로 계산했다. 성능은 최대화하고 학습시간·학습 가능 파라미터 비율은 최소화했다. 한 조건에서 다른 방법이 세 축 모두 동등 이상이고 적어도 한 축에서 엄격히 우수할 때 지배된 것으로 정의했다. 이 분석은 축을 하나의 임의 가중합으로 합치지 않지만, peak memory와 추론 비용을 포함하지 않는다. 유의수준은 .05로 두었고, 분석 코드는 결과 행 수·중복·결측·방법 수·시드 수를 먼저 검증한다.</p>
+<p class="p8">평가의 재현 가능성을 위해 실행 횟수와 추론 분석 단위를 구분하였다. 550은 22개 과제/모델 조건×5개 방법×5개 시드의 실행 횟수이며 통계적 표본 수가 아니다. 고정 GitHub 커밋의 공개표는 각 5개 시드를 집계한 110개 과제/모델/방법 행으로 구성된다. 중복·결측·방법 수·시드 수를 검증한 뒤 Study 2의 두 모델 조건을 과제 안에서 동일 가중 평균하여 65개 과제/방법 셀을 만들었고, Friedman 및 쌍대 검정의 블록 수는 13개 고유 과제로 제한하였다. 따라서 550개 실행이나 110개 집계행을 서로 독립인 표본으로 취급한 검정은 수행하지 않았다.</p>
+<p class="p21">보조적 언어 세션별 분석에서는 Study 1과 Study 2를 영어 세션, Study 3을 한국어 세션으로 구분하였다. Study 2에서 같은 과제에 적용된 RoBERTa와 BERTweet 결과는 과제 안에서 동일 가중 평균하여 영어 10개와 한국어 3개의 고유 과제를 기술 단위로 사용했다. 방법별로 과제 수준 평균·중앙 Full FT 대비 ΔF1, 평균 시드 표준편차, Full FT 대비 평균 시간 절감률, 손실 0.02 이내 과제 수를 산출했다. 0.02는 통계적 동등성 경계가 아니라 앞서 정의한 실무적 허용폭이다. 한국어 과제가 3개뿐이고 언어가 기반 모델, 도메인, 데이터 규모, 클래스 구조 및 최대 epoch와 결합되어 있으므로 언어 간 가설검정이나 언어×방법 인과효과 추정은 수행하지 않고 성층 기술통계로 한정했다.</p>
+<p class="p9"><b>5. 객관적 평가 원칙과 판정 규칙</b></p>
+<p class="p8">본 연구에서 객관적 평가는 연구자 판단이 전혀 개입하지 않았다는 뜻이 아니라, 동일 공개자료에 동일한 운영 정의와 판정 규칙을 적용하면 같은 결과를 얻을 수 있도록 분석 단위·지표 방향·비교군·오류 통제·해석 경계를 명시했다는 뜻이다. 별도의 임의 가중 종합점수는 사용하지 않았으며, 다음 원칙을 모든 방법에 동일하게 적용하였다.</p>
+<p class="p8"><span class="s3"><b>(1) 비교 가능성.</b></span> 모든 방법은 같은 데이터 분할과 시험 표본을 사용하며 <span class="s5">data_seed=42</span>를 고정했다. 조건별 학습 시드는 42, 52, 62, 72, 82로 동일하다. 다만 방법별 학습률이 다르므로 결과는 알고리즘 구조만의 순수 효과가 아니라 공개 코드에 고정된 구현·튜닝 정책의 비교이다.</p>
+<p class="p8"><span class="s3"><b>(2) 지표 분리.</b></span> Macro-F1은 높을수록, 학습시간·학습 가능 파라미터 비율·시드 표준편차는 낮을수록 우수한 것으로 판정했다. 성능은 주 결과, 나머지 세 지표는 서로 대체할 수 없는 보조 결과로 보고하였다. Study 2의 과제 수준 시드 표준편차는 두 모델 조건에서 각각 계산된 표준편차의 동일 가중 평균이며, 모델 평균 예측을 시드별로 다시 계산한 값이 아니다.</p>
+<p class="p8"><span class="s3"><b>(3) 기술 판정과 추론의 분리.</b></span> 22개 조건의 관측 승자·허용 손실·Pareto 여부는 기술적 판정이고, 전역 방법 차이는 13개 과제 Friedman 검정, Full FT 대비 차이는 Holm 보정 Wilcoxon 검정으로 판단했다. 조건별 승자는 표시용 반올림값이 아니라 저장된 원 정밀도의 평균으로 정하고, 동률은 공동승으로 처리했다.</p>
+<p class="p8"><span class="s3"><b>(4) 오류와 효과크기.</b></span> 전역 검정의 유의수준은 .05이며 Kendall’s W와 Iman–Davenport F를 함께 보고했다. Full FT 기준 네 비교의 가족단위 오류는 Holm 방식으로 통제했다. 전역 판정은 Friedman p 값에, Full FT 기준 쌍대 판정은 Holm 보정 p 값에 근거했다. 차이의 방향과 크기는 평균·중앙값·Hodges–Lehmann 추정치·rank-biserial correlation·과제 재표집 신뢰구간으로 해석했다.</p>
+<p class="p8"><span class="s3"><b>(5) 해석 경계.</b></span> Full FT 대비 허용 손실 0.01과 0.02는 실무적 기술 기준이며 통계적 동등성 경계가 아니다. 낮은 시드 표준편차는 반복 간 산포가 작다는 뜻으로만 사용하고, 낮은 Macro-F1과 0에 가까운 표준편차가 함께 나타난 조건은 안정성 우위가 아니라 추가 진단이 필요한 실패 가능성으로 분류했다. 관측 승자, 방법 간 차이, Full FT 대비 차이 어느 것도 새로운 과제나 모델에 대한 보편적 우월성을 뜻하지 않는다.</p>
+<p class="p7"><b>IV. Results</b></p>
+<p class="p8">이하에서 “관측 승자”는 22개 조건의 기술적 판정, “방법 간 차이”는 13개 과제 Friedman 결과, “Full FT 대비 차이”는 Holm 보정 Wilcoxon 결과를 의미한다. 세 표현은 서로 다른 증거 수준을 가리키며 새로운 과제나 모델에 대한 보편적 우월성을 뜻하지 않는다.</p>
+<p class="p10"><br></p>
+<p class="p9"><b>1. 전역 성능과 방법 순위</b></p>
+<p class="p11">Table 3. Aggregate outcomes across 22 task/model conditions</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Method</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Mean Macro-F1</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Mean seed SD</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Mean time saving vs. Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Geometric speedup</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Mean trainable ratio</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>F1 wins</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.7588</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.0120</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.0%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1.000×</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>100.000%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>19</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>LoRA</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.6537</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.0091</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>3.3%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1.034×</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.695%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Adapter</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.6506</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.0048</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>12.5%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1.146×</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1.392%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>IA3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.6702</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.0062</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>11.0%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1.126×</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.487%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>BitFit</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.6443</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.0042</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>15.6%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1.188×</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0.548%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>0</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p15"><b></b><br></p>
+<p class="p16"><b></b><br></p>
+<p class="p8">Table 3의 단순 평균은 기술 통계이며 Study 2 과제가 모델별로 두 번 포함된다. Full FT의 22개 조건 평균 Macro-F1은 0.7588로 가장 높았고 19개 조건에서 1위였다. IA3는 평균 0.6702로 PEFT 중 가장 높았으며 2개 조건에서 1위였다. Adapter는 1개 조건에서 1위였다. BitFit의 시드 표준편차 평균이 가장 작았지만, 뒤에서 보이듯 저성능 조건의 0 표준편차가 포함되므로 이를 가장 안정적이라는 결론으로 바꾸지 않았다.</p>
+<p class="p10"><br></p>
+<p class="p22"><br></p>
+<p class="p18">Fig. 1. Task-level Macro-F1 differences between each PEFT method and Full FT. Study 2 model conditions are averaged within each task.</p>
+<p class="p20"><br></p>
+<p class="p8">Fig. 1은 고유 과제 수준에서 각 PEFT의 Full FT 대비 차이를 보여준다. 대부분 셀이 음수이지만 일부 과제에서는 양수이며, 손실 크기도 과제에 따라 크게 다르다. 특히 <span class="s5">finance_sentiment</span>와 <span class="s5">tweet_emotion</span>의 큰 음의 차이가 전체 평균 손실을 확대한다.</p>
+<p class="p10"><br></p>
+<p class="p11">Table 4. Task-level Friedman tests</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Outcome</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>χ²(4)</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>p</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Kendall’s W</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Iman–Davenport F(4,48)</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>p</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Best mean rank</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Macro-F1</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>24.800</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>&lt;.001</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.477</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>10.941</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>&lt;.001</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>Full FT, 1.385</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Training time</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>48.308</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>&lt;.001</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.929</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>157.000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>&lt;.001</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>BitFit, 1.000</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Trainable ratio</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>52.000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>&lt;.001</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1.000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>∞</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>&lt;.001</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>IA3, 1.000</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Seed SD</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>13.231</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.010</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.254</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>4.095</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.006</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>BitFit, 2.000</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p15"><b></b><br></p>
+<p class="p16"><b></b><br></p>
+<p class="p8">RQ1에 대해 Friedman 검정은 Macro-F1 순위의 방법 차이를 보였다, . 평균 순위는 Full FT 1.385, Adapter 2.538, LoRA 3.154, IA3 3.769, BitFit 4.154였다. IA3의 단순 조건 평균이 다른 PEFT보다 높지만 과제별 순위 평균은 낮았다. 이는 소수 조건의 큰 개선과 다수 조건의 작은 손실이 평균과 순위에 다르게 반영되기 때문이다.</p>
+<p class="p10"><br></p>
+<p class="p9"><b>2. Full FT 대비 PEFT의 과제 수준 차이</b></p>
+<p class="p11">Table 5. Pairwise task-level comparisons against Full FT</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>PEFT − Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Mean ΔF1 [bootstrap 95% CI]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Median Δ</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Hodges–Lehmann Δ</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Holm p</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Rank-biserial r</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Win/Loss</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>LoRA</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0906 [−0.1952, −0.0118]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0209</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0210</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.024</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−.780</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1/12</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>Adapter</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0924 [−0.2026, −0.0102]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0147</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0147</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.010</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−.890</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>2/11</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>IA3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0787 [−0.1551, −0.0185]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0309</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0407</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.024</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−.780</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1/12</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p12"><b>BitFit</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.1002 [−0.2099, −0.0189]</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0290</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−0.0344</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>.024</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>−.802</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p14"><b>1/12</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p15"><b></b><br></p>
+<p class="p16"><b></b><br></p>
+<p class="p8">RQ2에서 네 PEFT 방법은 Holm 보정 후 모두 Full FT보다 낮았다. 평균 차이는 IA3의 −0.0787부터 BitFit의 −0.1002까지였으며, 모든 과제 재표집 신뢰구간의 상한이 0보다 작았다. Rank-biserial correlation의 절댓값은 .780~.890으로 Full FT 방향의 일관된 우위를 나타냈다. 다만 평균 차이는 소수의 큰 실패에 민감하다. 예를 들어 Adapter의 평균 차이는 −0.0924지만 중앙값과 Hodges–Lehmann 추정치는 각각 약 −0.0147이었다. 따라서 “대부분 조건에서 약 9%p 손실”이라고 해석하면 안 되며, 다수의 근접 조건과 소수의 큰 붕괴가 함께 존재한다고 보는 편이 정확하다.</p>
+<p class="p8">22개 조건에서 Full FT 대비 Macro-F1 저하가 0.01 이내이거나 Full FT보다 높은 조건은 LoRA 4개, Adapter 5개, IA3 2개, BitFit 4개였다. 허용 손실 폭을 0.02로 넓히면 각각 11개, 14개, 5개, 6개였다. 이 임계값 분석은 통계적 동등성 검정이 아니라 관측된 실무 허용폭의 기술 통계이다.</p>
+<p class="p9"><b>3. 시간·파라미터 효율과 Pareto 관계</b></p>
+<p class="p8">RQ3에서 학습시간 순위 차이는 매우 컸다(). BitFit은 원시 초 단위 평균에서 22개 조건 모두 가장 짧았고, Full FT 대비 평균 15.6% 절감, 기하평균 1.188배 속도 향상을 보였다. Adapter는 평균 12.5%, IA3는 11.0%, LoRA는 3.3%를 절감했다. 그러나 LoRA는 4개 조건, Adapter와 IA3는 각각 1개 조건에서 Full FT보다 오히려 느렸다. 이는 작은 학습 가능 파라미터 비율이 벽시계 속도를 보장하지 않는다는 직접적 근거이다.</p>
+<p class="p8">학습 가능 파라미터 비율의 평균은 Full FT 100%, Adapter 1.392%, LoRA 0.695%, BitFit 0.548%, IA3 0.487% 순이었다. IA3는 22개 조건 모두에서 가장 작은 비율을 보였다. 성능·시간·파라미터의 3차원 Pareto 전선에는 IA3와 BitFit이 모든 조건에서 포함되었고, Full FT 19개, Adapter 16개, LoRA 15개 조건에서 포함되었다. 이는 IA3나 BitFit이 모든 면에서 최고라는 뜻이 아니라, 각 조건에서 다른 한 방법이 세 지표를 동시에 개선하지 못했다는 뜻이다.</p>
+<p class="p10"><br></p>
+<p class="p22"><br></p>
+<p class="p18">Fig. 2. Performance–training-time trade-off across 22 task/model conditions. Marker size represents the trainable-parameter ratio.</p>
+<p class="p20"><br></p>
+<p class="p8">Fig. 2에서 Full FT는 높은 성능 쪽에, BitFit과 IA3는 낮은 시간·파라미터 쪽에 주로 위치한다. 단일 종합점수를 만들지 않은 이유는 성능 1%p와 시간 1분의 상대 가치가 응용 환경마다 다르기 때문이다.</p>
+<p class="p10"><br></p>
+<p class="p9"><b>4. 전역 경향의 예외와 실패 양상</b></p>
+<p class="p11">Table 6. Selected local exceptions and collapse-like conditions</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Task / model</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Observation</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Macro-F1 (mean±SD)</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Interpretation</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>tweet_hate / RoBERTa</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>IA3 &gt; Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>0.5727±0.0109 vs. 0.4212±0.0080</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>PEFT가 큰 폭으로 우세한 국소 예외</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>tweet_hate / BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>IA3 &gt; Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>0.5349±0.0096 vs. 0.5278±0.0175</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>작은 관측 우위; 과제별 재검증 필요</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>news_ynat / KLUE-RoBERTa</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>Adapter &gt; Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>0.8702±0.0007 vs. 0.8666±0.0024</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>한국어 뉴스 과제의 국소 예외</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>finance_sentiment / RoBERTa</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>Adapter, BitFit low and SD=0</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>0.2482±0.0000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>동일한 저성능 수렴 또는 상수 예측 가능성</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>tweet_emotion / RoBERTa</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>BitFit low and SD=0</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>0.1410±0.0000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>낮은 변동성을 강건성으로 볼 수 없음</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>tweet_emotion / BERTweet</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>LoRA low and SD=0</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>0.1410±0.0000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>시드별 예측 원자료로 붕괴 확인 필요</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p25"><b></b><br></p>
+<p class="p26"><b></b><br></p>
+<p class="p8">RQ4에서 IA3는 <span class="s5">tweet_hate</span>의 두 기반 모델 조건 모두 1위였고, Adapter는 <span class="s5">news_ynat</span>에서 1위였다. 따라서 전역적으로 Full FT가 우세해도 특정 데이터·도메인에서는 PEFT의 정규화 효과나 제한된 업데이트가 더 적합할 수 있다. 그러나 현재 설계는 그 원인을 분리하는 ablation을 포함하지 않으므로 정규화 효과를 확정하지 않는다.</p>
+<p class="p8">반대로 <span class="s5">finance_sentiment</span>/RoBERTa의 Adapter와 BitFit은 0.2482±0.0000, <span class="s5">tweet_emotion</span>/RoBERTa의 BitFit과 <span class="s5">tweet_emotion</span>/BERTweet의 LoRA는 각각 0.1410±0.0000이었다. 완전히 동일한 평균과 표준편차 0은 다섯 시드가 일관되게 좋은 것이 아니라 유사한 저성능 해에 수렴했을 가능성을 시사한다. 공개 집계표만으로는 클래스별 예측 비율이나 confusion matrix를 복구할 수 없으므로 “예측 붕괴”를 확정하지 않고 “붕괴 가능성”으로 표현한다. 시드 표준편차에 대한 Friedman 차이는 존재했지만(), 이 지표만으로 방법의 재현성을 순위화하지 않은 이유이다.</p>
+<p class="p10"><br></p>
+<p class="p21">5. 언어 세션별 탐색적 비교</p>
+<p class="p21">Table 7. Task-level descriptive outcomes by language session</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Session</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Method</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Mean<br>
+Macro-F1</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Mean ΔF1<br>
+vs. Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Median ΔF1<br>
+vs. Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Mean<br>
+seed SD</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Mean time saving<br>
+vs. Full FT</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>English<br>
+(n=10)</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.7422</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0129</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>LoRA</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.6282</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.1140</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0224</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0098</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>+4.4%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Adapter</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.6241</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.1182</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0157</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0052</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>+13.2%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>IA3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.6482</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0941</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0345</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0066</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>+11.6%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>BitFit</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.6197</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.1225</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0306</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0046</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>+16.2%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Korean<br>
+(n=3)</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.8879</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0000</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0018</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>LoRA</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.8754</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0124</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0141</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0018</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-3.2%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>Adapter</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.8816</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0063</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0078</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0008</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>+9.7%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>IA3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.8604</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0274</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0278</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0015</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>+8.2%</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p27"><b></b><br></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>BitFit</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.8622</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0257</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>-0.0284</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>0.0006</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p13"><b>+13.6%</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p28"><i>Note. English includes Studies 1–2 and Korean includes Study 3. Study 2 model conditions were averaged within task. ΔF1 is relative to Full FT. The 0.02 threshold is a practical tolerance, not an equivalence margin. Absolute F1, time, and seed SD are not direct language-effect estimates because task, model, data scale, and epoch composition differ.</i></p>
+<p class="p29"><i></i><br></p>
+<p class="p21">영어 세션에서는 Full FT가 10개 중 9개 과제에서 최고 과제 수준 Macro-F1을 보였고, 예외는 동일 tweet_hate 과제의 두 모델을 평균한 IA3였다. 한국어 세션에서는 Full FT가 3개 중 2개에서 최고였고, news_ynat에서는 Adapter가 Full FT보다 0.0036 높았다. 자원 축은 두 세션에서 더 일관됐다. BitFit은 영어 19개와 한국어 3개 과제/모델 조건 모두에서 가장 짧았고, IA3는 모든 조건에서 학습 가능 파라미터 비율이 가장 낮았다.</p>
+<p class="p21">성능 보존 분포는 평균만으로 설명되지 않았다. 한국어에서 Adapter의 평균 ΔF1은 −0.0063, 중앙값은 −0.0078이고 3개 과제가 모두 0.02 허용폭에 포함되었다. 영어에서 Adapter의 평균 ΔF1은 −0.1182였지만 중앙값은 −0.0157이고 10개 중 7개가 0.02 이내였다. 평균과 중앙값의 큰 차이는 finance_sentiment와 tweet_emotion의 붕괴 가능 조건 등 소수의 큰 손실이 영어 평균을 끌어내렸음을 보여준다. LoRA, IA3, BitFit도 영어에서 평균 손실이 중앙값보다 훨씬 커 같은 비대칭성을 보였다.</p>
+<p class="p21">시간 효율과 파라미터 효율 역시 분리되었다. LoRA는 한국어 세션에서 평균 0.80%의 파라미터만 학습했지만 세 과제 모두 Full FT보다 느렸고 평균 시간 절감률은 −3.2%였다. 반면 Adapter는 한국어에서 평균 9.7%, 영어에서 13.2%의 시간을 절감했다. 그러나 한국어와 영어는 과제·모델·epoch 구성이 달라 절대 F1, 절대 학습시간 또는 표준편차의 크기를 언어 효과로 직접 비교할 수 없다.</p>
+<p class="p7"><b>V. Discussion</b></p>
+<p class="p9"><b>1. 핵심 주장과 증거 사슬</b></p>
+<p class="p8">본 연구의 중심 주장은 <span class="s3"><b>PEFT의 효율을 하나의 대리변수나 단일 순위로 판단할 수 없다</b></span>는 것이다. 이 주장은 연구자의 선호를 반영한 종합점수가 아니라 서로 분리해 정의한 네 판단 축과 세 수준의 판정 결과가 같은 방향을 가리키는지 확인하는 방식으로 평가하였다.</p>
+<p class="p8"><span class="s3"><b>성능 증거.</b></span> Full FT는 22개 조건 중 19개에서 관측 승자였고, 13개 과제 Friedman 검정에서 가장 높은 성능 순위를 보였으며, Full FT 기준 네 Wilcoxon 비교도 Holm 보정 후 모두 차이를 보였다. 따라서 관측 범위에서 Full FT를 성능 기준선으로 삼을 근거는 세 수준에서 일관된다. 다만 <span class="s5">tweet_hate</span>와 <span class="s5">news_ynat</span>의 반례가 있으므로 보편적 우월성으로 확장하지 않는다.</p>
+<p class="p8"><span class="s3"><b>시간·파라미터 증거.</b></span> IA3는 22개 조건 모두에서 학습 가능 파라미터 비율이 가장 작았지만 학습시간 승자는 22개 조건 모두 BitFit이었다. LoRA는 평균 0.695%만 학습했음에도 시간 절감이 3.3%에 그쳤고 네 조건에서는 Full FT보다 느렸다. 이는 “학습 가능 파라미터가 적다”와 “실제 학습 구간이 빠르다”가 동일 명제가 아님을 직접 보여준다.</p>
+<p class="p8"><span class="s3"><b>국소성 증거.</b></span> 전역 성능 기준선은 Full FT였지만 IA3는 두 <span class="s5">tweet_hate</span> 조건, Adapter는 <span class="s5">news_ynat</span>에서 Full FT를 앞섰다. Full FT 대비 손실이 0.02 이내이거나 더 높은 조건도 방법별로 존재했다. 따라서 전역 순위는 새 과제의 최종 결정을 대신하지 않으며, 기준선과 후보 PEFT를 목표 과제에서 함께 시험해야 한다.</p>
+<p class="p8"><span class="s3"><b>시드 민감도 증거.</b></span> 일부 조건은 낮은 Macro-F1과 0에 가까운 표준편차를 동시에 보였다. 현재 집계자료만으로 예측 붕괴를 확정할 수는 없지만, 작은 산포만으로 강건성을 선언할 수 없다는 반증은 된다. 평균 성능과 시드 변동성을 함께 읽고 시드별 예측·클래스별 지표로 추가 진단해야 한다.</p>
+<p class="p9"><b>2. 연구 질문에 대한 종합 답변</b></p>
+<p class="p8">RQ1과 RQ2의 답은 관측 범위에서 Full FT가 성능 중심 기본값이라는 것이다. Full FT는 19개 조건(19/22)에서 1위였고, 13개 과제 수준의 순위와 쌍대 비교에서도 우위를 보였다. 그러나 이 결론은 “모든 새 과제에서 Full FT가 최고”라는 보편 명제가 아니다. <span class="s5">tweet_hate</span>와 <span class="s5">news_ynat</span>의 국소적 예외, 그리고 Full FT 대비 손실이 0.02 이내이거나 더 높은 다수의 PEFT 조건은 자원 제약 하에서 국소적 대안이 있음을 보여준다.</p>
+<p class="p8">RQ3의 답은 파라미터 효율과 시간 효율이 서로 다른 속성이라는 것이다. IA3는 모든 조건에서 학습 가능 파라미터 비율이 가장 작았지만, 시간은 BitFit이 모든 조건에서 가장 짧았다. LoRA는 파라미터를 평균 0.695%만 학습했음에도 시간 절감이 3.3%에 그쳤고 네 조건에서는 Full FT보다 느렸다. 따라서 배포 의사결정에서 “학습 파라미터가 적다”를 “학습이 그 비율만큼 빠르다” 또는 “메모리를 그 비율만큼 적게 쓴다”로 번역하면 안 된다.</p>
+<p class="p8">RQ4의 답은 평균과 변동성을 함께 읽어야 한다는 것이다. 작은 표준편차는 원하는 성능 수준 주변에서 나타날 때 유용하지만, 낮은 성능에서의 작은 표준편차는 반복 가능한 실패일 수 있다. 향후 실험은 seed별 prediction, 클래스별 recall, confusion matrix, 예측 entropy를 보존하여 이 둘을 구분해야 한다.</p>
+<p class="p8">이 네 연구 질문을 종합하면 방법 선택은 두 단계로 수행하는 것이 타당하다. 먼저 목표 과제에서 Full FT 성능 기준선과 허용 가능한 손실 폭을 확인한다. 다음으로 그 허용 범위 안의 후보 가운데 실제 제약과 직접 연결된 학습시간 또는 학습 가능 파라미터 축을 최적화한다. 시드 표준편차는 독립적인 승자 지표가 아니라 저성능 반복 여부를 점검하는 진단 신호로 사용한다.</p>
+<p class="p21">3. 언어 세션별 비교에서 얻은 탐색적 인사이트</p>
+<p class="p21">첫째, 두 세션 모두 자원 효율의 구조적 순위는 일관됐지만 성능 예외를 만든 방법은 달랐다. BitFit의 시간 우위와 IA3의 파라미터 비율 우위는 유지된 반면, 영어 tweet_hate에서는 IA3가, 한국어 news_ynat에서는 Adapter가 Full FT를 앞섰다. 이 패턴은 특정 언어에 하나의 PEFT를 고정하기보다 목표 과제에서 Full FT와 후보 PEFT를 직접 비교해야 한다는 본 연구의 판정 절차를 강화한다.</p>
+<p class="p21">둘째, 평균–중앙값 괴리는 방법의 전형적 손실과 국소 실패 위험을 분리해서 보고해야 함을 보여준다. 영어 Adapter는 10개 중 7개 과제에서 0.02 허용폭을 만족했지만 소수의 큰 실패 때문에 평균 손실이 0.1182까지 확대되었다. 반대로 관찰된 한국어 세 과제에서는 Adapter가 가장 일관된 성능–시간 절충을 보였다. 다만 이는 한국어의 일반적 우위가 아니라 KLUE-RoBERTa와 세 과제, 5 epoch, 고정된 튜닝 정책 아래의 조건부 관찰이다.</p>
+<p class="p10"><br></p>
+<p class="p30">4. 실무적 선택 지침</p>
+<p class="p31">Table 8. Conditional selection guide</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Primary constraint</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Recommended starting point</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Evidence in this study</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Required validation</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Highest Macro-F1</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>19/22 wins; best task mean rank</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>GPU memory and storage budget</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Shortest training interval</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>BitFit</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>fastest in 22/22; 1.188× geometric speedup</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>class-wise collapse diagnostics</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Minimum trainable ratio</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>IA3</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>smallest in 22/22; mean 0.487%</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>implementation overhead and task fit</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>YNAT-like Korean news-title classification</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>Adapter exploratory candidate</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>best on news_ynat; +0.0036 vs. Full FT</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>matched-domain replication</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>TweetEval hate condition</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>IA3 local candidate</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>best in two model conditions for one task</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p32"><b>independent hate-speech datasets and threshold audit</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p23"><b>Unknown new task</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>Full FT baseline + one PEFT pilot</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>no universal PEFT winner</b></p>
+      </td>
+      <td valign="middle" class="td1">
+        <p class="p24"><b>fixed split, ≥5 seeds, predefined metric</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p25"><b></b><br></p>
+<p class="p26"><b></b><br></p>
+<p class="p8">첫째, 성능 손실 허용폭이 거의 없고 전체 모델 학습이 가능하면 Full FT를 기준선으로 삼는다. 둘째, 짧은 학습 구간이 최우선이면 BitFit을 우선 시험하되, 클래스별 지표로 붕괴를 배제한다. 셋째, 학습 가능 파라미터 비율이 가장 중요한 경우 IA3를 후보로 삼되 실제 메모리와 시간은 별도로 측정한다. 넷째, 새 과제에서는 본 연구의 전체 평균을 그대로 적용하지 말고 Full FT와 자원 목표에 맞는 PEFT 하나 이상을 같은 분할·복수 시드에서 비교한다.</p>
+<p class="p30">5. 국내 선행 대비 학술적 기여</p>
+<p class="p8">국내 KCI 선행이 Full FT–LoRA, Adapter 결합, 금융 감성분석, GLUE 일부 과제 등을 다루었다면[9-12], 본 연구는 IA3·BitFit을 포함한 다섯 방법과 13개 고유 과제의 통계적 비교, 그리고 낮은 시드 분산과 저성능의 공존을 함께 다룬다. 특히 기존 연구[12]의 세 GLUE 과제 비교에서 범위를 확장하여 영어·한국어, 다중 도메인, 두 종류의 자원 지표, 과제 수준 의존구조와 실패 가능성을 하나의 평가 틀 안에 통합했다. 이는 제한된 자원에서 방법을 선택해야 하는 연구자에게 단일 승자보다 재현 가능한 판정 절차와 해석 경계를 제공한다는 점에서 기여가 있다.</p>
+<p class="p30">6. 핵심 비주장과 해석 경계</p>
+<p class="p8">본 연구는 관찰된 Full FT의 성능 우위를 모든 모델 규모, 생성 과제 또는 decoder-only 대규모 언어모델에 일반화하지 않는다. 학습 가능 파라미터 비율이 낮다는 사실로 peak VRAM, 전체 계산량, 에너지 소비, 저장 비용 또는 추론 비용의 감소를 추론하지 않는다. 일부 과제의 PEFT 우위를 정규화 효과나 특정 알고리즘 구조의 인과적 효과로 단정하지 않으며, 낮은 표준편차만으로 강건성이나 예측 붕괴를 확정하지 않는다. 또한 13개 과제 집계표에 적용한 검정이 시드 수준 대응 검정이나 개별 실행 수준의 유의성을 대신한다고 주장하지 않는다. 이러한 비주장은 결론을 약화하는 장치가 아니라 현재 자료와 설계가 지지하는 범위를 명확히 하는 장치이다.</p>
+<p class="p30">7. 타당도 위협과 연구 한계</p>
+<p class="p8">첫째, <span class="s3"><b>구성 타당도</b></span>의 한계가 있다. 효율 지표는 <span class="s5">trainer.train()</span> 벽시계 시간과 학습 가능 파라미터 비율뿐이다. peak VRAM, 에너지, checkpoint 크기, 추론시간이 없으므로 “전체 비용”을 측정했다고 볼 수 없다. 시드 표준편차도 예측 안정성 전체를 대표하지 않는다.</p>
+<p class="p8">둘째, <span class="s3"><b>내적 타당도</b></span>의 한계가 있다. 방법별 학습률이 달라 방법 구조와 튜닝 정책의 효과가 결합되어 있다. epoch 수는 Study별로 2, 3, 5이며 모든 방법에 대한 동등한 규모의 하이퍼파라미터 탐색을 수행하지 않았다. 조기종료와 라이브러리 기본 optimizer/scheduler가 결과에 영향을 줄 수 있다. 단일 GPU에서 순차 실행했기 때문에 온도, 백그라운드 부하 등 시간 교란 요인이 남는다.</p>
+<p class="p8">셋째, <span class="s3"><b>통계적 결론 타당도</b></span>의 한계가 있다. 조건당 5개 시드의 평균과 표준편차는 제공되지만 공개 저장소에 seed-level 행이 없어 시드 쌍을 이용한 검정은 재현할 수 없다. 본 연구는 13개 과제 수준으로 추론을 제한했으며, 과제 수가 작고 영어 과제가 더 많다. Bootstrap 신뢰구간도 이 13개 과제의 경험적 분포를 재표집한 값이다. Study 2에서 두 모델을 평균하는 방식은 종속성 문제를 줄이는 대신 모델 상호작용을 축약한다.</p>
+<p class="p21">언어 세션별 비교에도 추가 교란이 있다. 영어 세션은 BERTweet와 RoBERTa를 사용한 10개 고유 과제인 반면 한국어 세션은 KLUE-RoBERTa의 3개 과제에 한정되고, 도메인·클래스 구조·훈련 표본 크기·최대 epoch도 서로 다르다. 따라서 언어는 기반 모델, 과제 구성, 데이터 규모 및 학습 예산과 분리되지 않으며 절대 Macro-F1, 학습시간 또는 시드 표준편차의 차이를 언어의 인과적 효과로 해석할 수 없다. 동일한 다국어 기반 모델과 대응 과제, 같은 표본 수·epoch·튜닝 예산을 사용하고 시드별 결과를 보존한 후속 통제 실험이 필요하다.</p>
+<p class="p8">13개 과제에 동일한 한 블록의 가중치를 부여했지만 여러 과제가 TweetEval 등 동일 데이터군과 도메인을 공유하므로 과제 간 완전한 독립성이 보장되지는 않는다. 추론 결과는 관측된 과제 집합에 조건부로 해석해야 한다.</p>
+<p class="p8">넷째, <span class="s3"><b>외적 타당도</b></span>의 한계가 있다. 기반 모델은 encoder 계열 약 1억 파라미터 규모의 BERTweet, RoBERTa, KLUE-RoBERTa에 한정되고 과제도 분류 중심이다. 생성형 LLM, decoder-only 모델, 장문, token classification, 다른 언어, 더 큰 모델로 일반화할 수 없다. <span class="s5">tweet_hate</span>와 <span class="s5">news_ynat</span>의 국소 우위는 독립 데이터에서 재현되어야 한다.</p>
+<p class="p8">다섯째, <span class="s3"><b>데이터·재현성</b></span>의 한계가 있다. 공개 저장소는 데이터 라이선스 때문에 원 데이터를 재배포하지 않고 실행 시 원 출처에서 내려받는다. 원 출처의 revision 변화는 향후 재실행 결과에 영향을 줄 수 있다. 모델 repository revision도 일부 런에서 명시적 tag가 아니라 당시 해결된 commit에 의존할 수 있다. 공개 패키지는 110개 집계행을 포함하지만 seed-level table과 예측 파일은 포함하지 않는다.</p>
+<p class="p7"><b>VI. Conclusions</b></p>
+<p class="p8">본 연구는 학습 가능 파라미터 수가 적은 방법이 실제로도 더 빠르고, 충분한 성능을 유지하며, 안정적인 대안이 되는지를 검토하기 위해 Full FT, LoRA, Adapter, IA3, BitFit의 550회 실행을 요약한 공개 집계 결과를 재분석하였다. 범위는 3개 기반 모델, 영어·한국어 13개 텍스트 분류 과제와 22개 과제/모델 조건이다. 550회 실행과 110개 집계행을 독립 표본으로 간주하지 않고, 전역 추론의 블록을 13개 고유 과제로 제한하였다.</p>
+<p class="p8">분석 결과, 성능·시간·학습 가능 파라미터 비율은 하나의 효율 지표로 대체할 수 없었다. 성능을 우선할 때 Full FT는 22개 조건 중 19개에서 관측 승자였고 과제 수준 순위와 쌍대 비교에서도 가장 일관된 기준선이었다. 학습시간을 우선할 때는 22개 조건 모두에서 가장 짧았던 BitFit이, 학습 가능 파라미터 비율을 우선할 때는 22개 조건 모두에서 가장 작은 비율을 보인 IA3가 초기 후보가 될 수 있다. 그러나 IA3와 Adapter가 각각 특정 hate-speech와 한국어 뉴스 과제에서 Full FT를 앞섰고, 낮은 평균 성능과 0에 가까운 시드 표준편차가 함께 나타난 조건도 있었다. 언어 세션별 탐색 분석에서도 BitFit의 시간 우위와 IA3의 파라미터 비율 우위는 유지됐지만, 성능 예외는 영어 tweet_hate의 IA3와 한국어 news_ynat의 Adapter처럼 특정 과제에 국한되어 나타났다. 관찰된 한국어 세 과제의 작은 PEFT 손실은 언어 효과가 아니라 과제·모델·학습예산이 결합된 조건부 결과로 해석해야 한다.</p>
+<p class="p8">본 연구의 학술적 의의는 PEFT 방법의 평균 순위를 하나 더 제시한 데 있지 않다. 가장 강하게 지지되는 주장은 학습 가능 파라미터 수만으로 성능·속도·관측된 시드 산포를 대표할 수 없다는 것이며, 이에 따라 <span class="s3"><b>Full FT 성능 기준선 설정 → 허용 손실 범위 확인 → 실제 자원 제약 축 최적화 → 시드별 실패 진단</b></span>의 다단계 판정 절차를 제시한 데 의의가 있다. 이 절차는 전역 기본값과 과제별 예외를 동시에 인정하므로, 보편적 단일 승자 주장보다 새로운 과제의 방법 선택에 직접 활용할 수 있다.</p>
+<p class="p8">이 결론은 공개 집계표, 단일 GPU 환경, encoder 기반 분류 과제와 고정된 구현·튜닝 정책에 한정된다. 관찰된 차이를 알고리즘 자체의 인과적 효과로 단정하거나 학습 가능 파라미터 비율을 메모리·에너지·추론 비용의 대리 지표로 해석하지 않는다. 후속 연구에서는 시드별 예측, confusion matrix, peak VRAM, 에너지, 체크포인트 크기와 추론 지연을 함께 공개하고, 더 다양한 모델 규모와 생성 과제에서 동일한 판정 절차를 검증할 필요가 있다.</p>
+<p class="p9"><b>Data and Code Availability</b></p>
+<p class="p33"><span class="s2">분석의 원 코드, 설정, 110행 집계 결과는 공개 저장소[31]의 고정 커밋 </span><span class="s1">539e3d3588ef3cc4aa6299fec74776bc1afe0d2d</span><span class="s2">에 연결하였다. 고정 저장소 URL은 </span><span class="s1">https://github.com/LEESY-X/Domain_fine-tuning_experiments/tree/539e3d3588ef3cc4aa6299fec74776bc1afe0d2d</span><span class="s2">이다. 본문 재분석은 해당 커밋의 </span><span class="s1">final_tables/summary_by_task_model_method.csv</span><span class="s2">를 복제한 </span><span class="s1">source_data/summary_by_task_model_method.csv</span><span class="s2">(SHA-256 </span><span class="s1">bcf303162463a4ec3c706269c10f50a9d995355389997611c220d36211f4475c</span><span class="s2">)와 로컬 분석 스크립트를 사용했다. HTML 원 보고서의 SHA-256은 </span><span class="s1">b22844dce376bd0255f6f83c0dfc3e689fedae47f6698d1d7dedd227267ae76f</span><span class="s2">이다. 공개 저장소는 데이터셋 원문과 seed-level 실행표·예측 파일을 포함하지 않는다. 재현 시 각 데이터셋의 이용조건을 원 제공처에서 확인해야 한다.</span></p>
+<p class="p7"><b>ACKNOWLEDGEMENT</b></p>
+<p class="p21">OpenAI Codex (GPT-5) was used on July 18 and August 4, 2026 for drafting assistance, language revision, reference organization, statistical consistency checking, language-stratified descriptive analysis, and KSCI-format conversion. The authors retain sole responsibility for independently verifying the data, analyses, citations, interpretations, and final wording.</p>
+<p class="p34"><b>REFERENCES</b></p>
+<p class="p35"><span class="s1"><i>[1] J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova, “BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding,” Proceedings of NAACL-HLT, pp. 4171–4186, 2019. DOI: 10.18653/v1/N19-1423.</i></span></p>
+<p class="p35"><span class="s1"><i>[2] N. Houlsby, A. Giurgiu, S. Jastrzebski, B. Morrone, Q. de Laroussilhe, A. Gesmundo, M. Attariyan, and S. Gelly, “Parameter-Efficient Transfer Learning for NLP,” Proceedings of the 36th International Conference on Machine Learning, PMLR 97, pp. 2790–2799, 2019. https://proceedings.mlr.press/v97/houlsby19a.html</i></span></p>
+<p class="p35"><span class="s1"><i>[3] E. J. Hu, Y. Shen, P. Wallis, Z. Allen-Zhu, Y. Li, S. Wang, L. Wang, and W. Chen, “LoRA: Low-Rank Adaptation of Large Language Models,” International Conference on Learning Representations, 2022. https://openreview.net/forum?id=nZeVKeeFYf9</i></span></p>
+<p class="p35"><span class="s1"><i>[4] H. Liu, D. Tam, M. Muqeeth, J. Mohta, T. Huang, M. Bansal, and C. Raffel, “Few-Shot Parameter-Efficient Fine-Tuning Is Better and Cheaper than In-Context Learning,” Advances in Neural Information Processing Systems, Vol. 35, pp. 1950–1965, 2022. https://proceedings.neurips.cc/paper_files/paper/2022/hash/0cde695b83bd186c1fd456302888454c-Abstract-Conference.html</i></span></p>
+<p class="p35"><span class="s1"><i>[5] E. Ben Zaken, Y. Goldberg, and S. Ravfogel, “BitFit: Simple Parameter-Efficient Fine-Tuning for Transformer-Based Masked Language-Models,” Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics: Short Papers, pp. 1–9, 2022. DOI: 10.18653/v1/2022.acl-short.1.</i></span></p>
+<p class="p35"><span class="s1"><i>[6] J. He, C. Zhou, X. Ma, T. Berg-Kirkpatrick, and G. Neubig, “Towards a Unified View of Parameter-Efficient Transfer Learning,” International Conference on Learning Representations, 2022. https://openreview.net/forum?id=0RDcd5Axok</i></span></p>
+<p class="p35"><span class="s1"><i>[7] G. Chen, F. Liu, Z. Meng, and S. Liang, “Revisiting Parameter-Efficient Tuning: Are We Really There Yet?,” Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing, pp. 2612–2626, 2022. DOI: 10.18653/v1/2022.emnlp-main.168.</i></span></p>
+<p class="p35"><span class="s1"><i>[8] R. Belanec, B. Pecher, I. Srba, and M. Bielikova, “PEFT-Bench: A Parameter-Efficient Fine-Tuning Methods Benchmark,” Proceedings of the 19th Conference of the European Chapter of the Association for Computational Linguistics, pp. 3035–3054, 2026. DOI: 10.18653/v1/2026.eacl-long.140.</i></span></p>
+<p class="p35"><span class="s1"><i>[9] D. Kim and N. Kim, “Enhancing LoRA Fine-tuning Performance Using Curriculum Learning,” Journal of the Korea Society of Computer and Information, Vol. 29, No. 3, pp. 43–54, 2024. DOI: 10.9708/jksci.2024.29.03.043.</i></span></p>
+<p class="p35"><span class="s1"><i>[10] Y.-H. Mo and S. Kang, “Adapter-based Learning Methods for Task-oriented Dialogue Systems,” Journal of Digital Contents Society, Vol. 24, No. 6, pp. 1221–1228, 2023. DOI: 10.9728/dcs.2023.24.6.1221.</i></span></p>
+<p class="p35"><span class="s1"><i>[11] J. Park and D. Kim, “Mamba based Adapter Fine-tuning Approach for Financial Sentiment Analysis,” Smart Media Journal, Vol. 14, No. 10, pp. 118–126, 2025. DOI: 10.30693/SMJ.2025.14.10.118.</i></span></p>
+<p class="p35"><span class="s1"><i>[12] Y. Hong and J. Kim, “Evaluating Fine-tuning Performance Variations of BERT Models Using the GLUE Benchmark,” The Korea Journal of BigData, Vol. 10, No. 2, pp. 95–109, 2025. DOI: 10.36498/kbigdt.2025.10.2.95.</i></span></p>
+<p class="p35"><span class="s1"><i>[13] J. Demšar, “Statistical Comparisons of Classifiers over Multiple Data Sets,” Journal of Machine Learning Research, Vol. 7, pp. 1–30, 2006. https://www.jmlr.org/papers/v7/demsar06a.html</i></span></p>
+<p class="p35"><span class="s1"><i>[14] S. García and F. Herrera, “An Extension on Statistical Comparisons of Classifiers over Multiple Data Sets for All Pairwise Comparisons,” Journal of Machine Learning Research, Vol. 9, pp. 2677–2694, 2008. https://www.jmlr.org/papers/v9/garcia08a.html</i></span></p>
+<p class="p35"><span class="s1"><i>[15] S. Holm, “A Simple Sequentially Rejective Multiple Test Procedure,” Scandinavian Journal of Statistics, Vol. 6, No. 2, pp. 65–70, 1979. https://www.jstor.org/stable/4615733</i></span></p>
+<p class="p35"><span class="s1"><i>[16] R. Dror, G. Baumer, S. Shlomov, and R. Reichart, “The Hitchhiker’s Guide to Testing Statistical Significance in Natural Language Processing,” Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics, pp. 1383–1392, 2018. DOI: 10.18653/v1/P18-1128.</i></span></p>
+<p class="p35"><span class="s1"><i>[17] J. Dodge, G. Ilharco, R. Schwartz, A. Farhadi, H. Hajishirzi, and N. Smith, “Fine-Tuning Pretrained Language Models: Weight Initializations, Data Orders, and Early Stopping,” arXiv:2002.06305, 2020. https://arxiv.org/abs/2002.06305</i></span></p>
+<p class="p35"><span class="s1"><i>[18] J. Dodge, S. Gururangan, D. Card, R. Schwartz, and N. A. Smith, “Show Your Work: Improved Reporting of Experimental Results,” Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing, pp. 2185–2194, 2019. DOI: 10.18653/v1/D19-1224.</i></span></p>
+<p class="p35"><span class="s1"><i>[19] J. Pineau, P. Vincent-Lamarre, K. Sinha, V. Larivière, A. Beygelzimer, F. d’Alché-Buc, E. Fox, and H. Larochelle, “Improving Reproducibility in Machine Learning Research: A Report from the NeurIPS 2019 Reproducibility Program,” Journal of Machine Learning Research, Vol. 22, No. 164, pp. 1–20, 2021. https://www.jmlr.org/papers/v22/20-303.html</i></span></p>
+<p class="p35"><span class="s1"><i>[20] P. M. Kennedy, D. Jin, A. Mostafazadeh Davani, J. Dehghani, and X. Ren, “Constructing Interval Variables via Faceted Rasch Measurement and Multitask Deep Learning: A Hate Speech Application,” PLOS ONE, Vol. 15, No. 6, e0233509, 2020. DOI: 10.1371/journal.pone.0233509.</i></span></p>
+<p class="p35"><span class="s1"><i>[21] P. Malo, A. Sinha, P. Korhonen, J. Wallenius, and P. Takala, “Good Debt or Bad Debt: Detecting Semantic Orientations in Economic Texts,” Journal of the Association for Information Science and Technology, Vol. 65, No. 4, pp. 782–796, 2014. DOI: 10.1002/asi.23062.</i></span></p>
+<p class="p35"><span class="s1"><i>[22] A. L. Maas, R. E. Daly, P. T. Pham, D. Huang, A. Y. Ng, and C. Potts, “Learning Word Vectors for Sentiment Analysis,” Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies, pp. 142–150, 2011. https://aclanthology.org/P11-1015/</i></span></p>
+<p class="p35"><span class="s1"><i>[23] X. Zhang, J. Zhao, and Y. LeCun, “Character-level Convolutional Networks for Text Classification,” Advances in Neural Information Processing Systems, Vol. 28, pp. 649–657, 2015. https://papers.nips.cc/paper_files/paper/2015/hash/250cf8b51c773f3f8dc8b4be867a9a02-Abstract.html</i></span></p>
+<p class="p35"><span class="s1"><i>[24] P. Keung, Y. Lu, G. Szarvas, and N. A. Smith, “The Multilingual Amazon Reviews Corpus,” Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing, pp. 4563–4568, 2020. DOI: 10.18653/v1/2020.emnlp-main.369.</i></span></p>
+<p class="p35"><span class="s1"><i>[25] F. Barbieri, J. Camacho-Collados, L. Espinosa Anke, and L. Neves, “TweetEval: Unified Benchmark and Comparative Evaluation for Tweet Classification,” Findings of the Association for Computational Linguistics: EMNLP 2020, pp. 1644–1650, 2020. DOI: 10.18653/v1/2020.findings-emnlp.148.</i></span></p>
+<p class="p35"><span class="s1"><i>[26] J. Lee, T. Lim, H. Lee, B. Jo, Y. Kim, H. Yoon, and S. C. Han, “K-MHaS: A Multi-label Hate Speech Detection Dataset in Korean Online News Comment,” Proceedings of the 29th International Conference on Computational Linguistics, pp. 3530–3538, 2022. https://aclanthology.org/2022.coling-1.311/</i></span></p>
+<p class="p35"><span class="s1"><i>[27] e9t, “NSMC: Naver Sentiment Movie Corpus,” GitHub repository, 2015. https://github.com/e9t/nsmc</i></span></p>
+<p class="p35"><span class="s1"><i>[28] S. Park et al., “KLUE: Korean Language Understanding Evaluation,” Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks, Vol. 1, 2021. https://datasets-benchmarks-proceedings.neurips.cc/paper_files/paper/2021/hash/98dce83da57b0395e163467c9dae521b-Abstract-round2.html</i></span></p>
+<p class="p35"><span class="s1"><i>[29] D. Q. Nguyen, T. Vu, and A. T. Nguyen, “BERTweet: A Pre-trained Language Model for English Tweets,” Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations, pp. 9–14, 2020. DOI: 10.18653/v1/2020.emnlp-demos.2.</i></span></p>
+<p class="p35"><span class="s1"><i>[30] Y. Liu, M. Ott, N. Goyal, J. Du, M. Joshi, D. Chen, O. Levy, M. Lewis, L. Zettlemoyer, and V. Stoyanov, “RoBERTa: A Robustly Optimized BERT Pretraining Approach,” arXiv:1907.11692, 2019. https://arxiv.org/abs/1907.11692</i></span></p>
+<p class="p35"><span class="s1"><i>[31] LEESY-X, “Domain Fine-Tuning Experiments,” GitHub repository, commit 539e3d3588ef3cc4aa6299fec74776bc1afe0d2d, 2026. https://github.com/LEESY-X/Domain_fine-tuning_experiments/tree/539e3d3588ef3cc4aa6299fec74776bc1afe0d2d</i></span></p>
+<p class="p35"><span class="s1"><i>[32] M. Sokolova and G. Lapalme, “A Systematic Analysis of Performance Measures for Classification Tasks,” Information Processing &amp; Management, Vol. 45, No. 4, pp. 427–437, 2009. DOI: 10.1016/j.ipm.2009.03.002.</i></span></p>
+</body>
+</html>

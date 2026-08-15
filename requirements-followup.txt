@@ -1,0 +1,10 @@
+# Top-level package versions recorded for the 2026-08-07 Apple-MPS follow-up; this is not a complete transitive dependency or OS lock.
+torch==2.13.0
+transformers==5.9.0
+datasets==4.8.5
+peft==0.19.1
+accelerate==1.14.0
+scikit-learn==1.9.0
+pandas==3.0.5
+numpy==2.5.1
+sentencepiece==0.2.2

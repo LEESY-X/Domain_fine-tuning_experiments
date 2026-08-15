@@ -1,0 +1,7 @@
+﻿variant,variant_label,epochs_requested,f1_mean,f1_sd,macro_f1_mean_sd,collapsed_runs,collapse_runs_display,full_class_coverage_runs,full_coverage_display,majority_prediction_rate_mean,train_rows,runs
+baseline,Baseline (2 ep.),2,0.24816255944660601,0,0.2482 ± 0.0000,5,5/5,0,0/5,1,1024,5
+longer,Longer (max 5 ep.),5,0.24816255944660601,0,0.2482 ± 0.0000,5,5/5,0,0/5,1,1024,5
+weighted,Weighted (2 ep.),2,0.24816255944660601,0,0.2482 ± 0.0000,5,5/5,0,0/5,1,1024,5
+longer_weighted,Longer + weighted (max 5 ep.),5,0.24816255944660601,0,0.2482 ± 0.0000,5,5/5,0,0/5,1,1024,5
+higher_lr,Higher LR (2 ep.),2,0.24816255944660601,0,0.2482 ± 0.0000,5,5/5,0,0/5,1,1024,5
+higher_lr_weighted,Higher LR + weighted (max 5 ep.),5,0.80400267314978935,0.0062768432005025996,0.8040 ± 0.0063,0,0/5,5,5/5,0.51652892561983466,1024,5

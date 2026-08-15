@@ -1,0 +1,68 @@
+{
+  "captured_at": "2026-08-07",
+  "scope": "followup_only",
+  "executed_suite_sha256": "3bcdaa9bafe78748aa3e7658008c984c09c0b0349fcd5fdc55d0d34c2469bdcb",
+  "executed_source_snapshot_available": false,
+  "dataset_revisions": {
+    "lmassaron/FinancialPhraseBank": null,
+    "cardiffnlp/tweet_eval": null
+  },
+  "model_revisions": {
+    "FacebookAI/roberta-base": "e2da8e2f811d1448a5b465c236feacd80ffbac7b",
+    "vinai/bertweet-base": "b349c1243407b0dcffeabb2337497477286e27ab"
+  },
+  "dataset_splits": {
+    "pilot": {
+      "finance_sentiment": {
+        "source": "lmassaron/FinancialPhraseBank",
+        "subset": null,
+        "limits": {"train": 1024, "validation": 512, "test": 2048},
+        "rows": {"train": 1024, "validation": 484, "test": 484},
+        "split_seed": 42,
+        "fingerprints": {
+          "train": "1a24caecca529dc6",
+          "validation": "41f3cb00fc2218e7",
+          "test": "10787703ae1cbb98"
+        }
+      },
+      "tweet_emotion": {
+        "source": "cardiffnlp/tweet_eval",
+        "subset": "emotion",
+        "limits": {"train": 1024, "validation": 512, "test": 2048},
+        "rows": {"train": 1024, "validation": 374, "test": 1421},
+        "split_seed": 42,
+        "fingerprints": {
+          "train": "f9d462a9feb1b9c9",
+          "validation": "60b428ec5c3a181c",
+          "test": "03c09f8a7d7ab5a9"
+        }
+      }
+    },
+    "full": {
+      "finance_sentiment": {
+        "source": "lmassaron/FinancialPhraseBank",
+        "subset": null,
+        "limits": null,
+        "rows": {"train": 3872, "validation": 484, "test": 484},
+        "split_seed": 42,
+        "fingerprints": {
+          "train": "6b104ca5c71edca8",
+          "validation": "41f3cb00fc2218e7",
+          "test": "10787703ae1cbb98"
+        }
+      },
+      "tweet_emotion": {
+        "source": "cardiffnlp/tweet_eval",
+        "subset": "emotion",
+        "limits": null,
+        "rows": {"train": 3257, "validation": 374, "test": 1421},
+        "split_seed": 42,
+        "fingerprints": {
+          "train": "c651013542e077f3",
+          "validation": "60b428ec5c3a181c",
+          "test": "03c09f8a7d7ab5a9"
+        }
+      }
+    }
+  }
+}

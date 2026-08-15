@@ -27,9 +27,11 @@
 | save total limit | 1 | `src/suite.py` |
 | report_to | `none` | `src/suite.py` |
 | data seed | 42 | `src/suite.py` |
-| optimizer | 확인 필요 | 확인 필요 |
-| scheduler | 확인 필요 | 확인 필요 |
+| optimizer | `adamw_torch` | 현재 `config/experiment_config.json`, `src/suite.py` |
+| scheduler | `linear` | 현재 `config/experiment_config.json`, `src/suite.py` |
 | dropout | method별 설정 참조 | `config/experiment_config.json` |
+
+현재 재현 코드와 후속 실험은 optimizer/scheduler를 명시적으로 고정한다. 다만 공개 패키지에는 원본 550개 run의 `run_config.json`이 없으므로, 원본 집계 생성 당시의 실제 값을 소급해 단정하지 않는다.
 
 ## 2. Method별 learning rate
 
@@ -75,4 +77,3 @@
 | Study 1 | 3 | `vinai/bertweet-base` | `measuring_hate_speech` | `config/experiment_config.json` |
 | Study 2 | 2 | `vinai/bertweet-base`, `FacebookAI/roberta-base` | `tweet_sentiment`, `finance_sentiment`, `movie_reviews`, `product_reviews`, `tweet_emotion`, `tweet_hate`, `tweet_offensive`, `tweet_irony`, `news_topic` | `config/experiment_config.json` |
 | Study 3 | 5 | `klue/roberta-base` | `news_ynat`, `movie_nsmc`, `comment_kmhas_binary` | `config/experiment_config.json` |
-

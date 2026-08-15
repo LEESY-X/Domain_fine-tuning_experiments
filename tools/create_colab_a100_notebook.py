@@ -3,7 +3,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "colab_a100_full_550_runs.ipynb"
+LOW_DRIVE = ROOT / "colab_a100_low_drive_550_runs.ipynb"
 suite_source = (ROOT / "src" / "suite.py").read_text(encoding="utf-8")
+result_analysis_source = (ROOT / "src" / "result_analysis.py").read_text(encoding="utf-8")
 config_source = (ROOT / "config" / "experiment_config.json").read_text(encoding="utf-8")
 
 
@@ -56,6 +58,7 @@ DRIVE_ROOT = Path('/content/drive/MyDrive/paper_finetuning_5method_A100')
 print('DRIVE_ROOT =', DRIVE_ROOT)
 """),
     code("SUITE_SOURCE = " + repr(suite_source) + "\n(DRIVE_ROOT / 'src' / 'suite.py').write_text(SUITE_SOURCE, encoding='utf-8')\nprint('suite.py written:', len(SUITE_SOURCE), 'chars')"),
+    code("RESULT_ANALYSIS_SOURCE = " + repr(result_analysis_source) + "\n(DRIVE_ROOT / 'src' / 'result_analysis.py').write_text(RESULT_ANALYSIS_SOURCE, encoding='utf-8')\nprint('result_analysis.py written:', len(RESULT_ANALYSIS_SOURCE), 'chars')"),
     code("CONFIG_SOURCE = " + repr(config_source) + "\n(DRIVE_ROOT / 'config' / 'experiment_config.json').write_text(CONFIG_SOURCE, encoding='utf-8')\nprint(CONFIG_SOURCE)"),
     md("""
 ## 3. A100 및 프로토콜 사전점검
@@ -172,3 +175,25 @@ notebook = {
 }
 OUT.write_text(json.dumps(notebook, ensure_ascii=False, indent=1), encoding="utf-8")
 print(OUT)
+
+# The low-Drive notebook has a different execution flow, but shares the same
+# embedded runner. Keep those embedded modules synchronized as part of the
+# canonical notebook generation step.
+if LOW_DRIVE.exists():
+    low_drive_notebook = json.loads(LOW_DRIVE.read_text(encoding="utf-8"))
+    synced_cells = []
+    for cell in low_drive_notebook["cells"]:
+        source = "".join(cell.get("source", []))
+        if source.startswith("RESULT_ANALYSIS_SOURCE = "):
+            continue
+        if source.startswith("SUITE_SOURCE = "):
+            cell = code("SUITE_SOURCE = " + repr(suite_source) + "\n(DRIVE_ROOT / 'src' / 'suite.py').write_text(SUITE_SOURCE, encoding='utf-8')\nprint('suite.py written:', len(SUITE_SOURCE), 'chars')")
+            synced_cells.append(cell)
+            synced_cells.append(code("RESULT_ANALYSIS_SOURCE = " + repr(result_analysis_source) + "\n(DRIVE_ROOT / 'src' / 'result_analysis.py').write_text(RESULT_ANALYSIS_SOURCE, encoding='utf-8')\nprint('result_analysis.py written:', len(RESULT_ANALYSIS_SOURCE), 'chars')"))
+            continue
+        if source.startswith("CONFIG_SOURCE = "):
+            cell = code("CONFIG_SOURCE = " + repr(config_source) + "\n(DRIVE_ROOT / 'config' / 'experiment_config.json').write_text(CONFIG_SOURCE, encoding='utf-8')\nprint(CONFIG_SOURCE)")
+        synced_cells.append(cell)
+    low_drive_notebook["cells"] = synced_cells
+    LOW_DRIVE.write_text(json.dumps(low_drive_notebook, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(LOW_DRIVE)
