@@ -1,0 +1,22 @@
+{
+  "task": "finance_sentiment",
+  "run_mode": "FOLLOWUP",
+  "source": "lmassaron/FinancialPhraseBank",
+  "subset": null,
+  "limits": {
+    "train": 1024,
+    "validation": 512,
+    "test": 2048
+  },
+  "rows": {
+    "train": 1024,
+    "validation": 484,
+    "test": 484
+  },
+  "split_seed": 42,
+  "fingerprints": {
+    "train": "1a24caecca529dc6",
+    "validation": "41f3cb00fc2218e7",
+    "test": "10787703ae1cbb98"
+  }
+}

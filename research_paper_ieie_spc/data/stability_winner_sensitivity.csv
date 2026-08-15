@@ -1,0 +1,6 @@
+method,raw_co_lowest_sd_conditions,co_lowest_sd_after_fingerprint_exclusion
+full_ft,2,3
+lora,4,3
+adapter,3,3
+ia3,4,5
+bitfit,10,8
